@@ -65,6 +65,11 @@ struct Card
                 throw std::range_error("Card rank must be in the range of 0-51");
         }
 
+/*
+    Card& operator =(const Card& other):
+        SUIT{other.SUIT}, RANK{other.RANK}
+        {}
+*/
     bool operator <(const Card& other) const; // the const at the end tells the compiler that this will never change the state of the object
     bool operator ==(const Card& other) const;
 };
@@ -78,7 +83,7 @@ struct Deck
     public:
         std::vector<Card> deck;
         // Creates a deck of cards, in order
-        Deck(): rd(), gen(rd) // No curly brackets needed when calling a constructor directly
+        Deck(): rd(), gen(rd())  // No curly brackets needed when calling a member's constructor directly
         {
             /*
             // C++ 23 way; not supported by compilers yet
@@ -97,7 +102,7 @@ struct Deck
         // MAGIC LIES HERE: 
         // std::span will MAGICALLY figure out the size of the input data, even with standard C arrays that don't know their own size.
         // So always accept inputs as std::span, and it will make your code WAY more reliable
-        Deck(const std::span<const Card>& other_deck): gen(std::random_device())
+        Deck(const std::span<const Card>& other_deck): rd(), gen(rd())
         {
             deck.clear();
             std::copy(other_deck.cbegin(), other_deck.cend(), std::back_inserter(deck));
@@ -107,6 +112,7 @@ struct Deck
         const Card& operator[](const size_t index) const;
 
         void shuffle();
+        void sort();
 
 };
 

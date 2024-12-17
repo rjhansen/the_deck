@@ -14,5 +14,13 @@
 
     void Deck::shuffle()
     {
-        std::random_shuffle(deck.begin(), deck.end(), gen);
+        std::random_device rd;
+        //std::mt19937 gen(rd()); // Mersenne Twister (1993) PRNG
+        std::default_random_engine e{rd()};
+        std::shuffle(deck.begin(), deck.end(), e);
+    }
+
+    void Deck::sort()
+    {
+        std::sort(deck.begin(), deck.end());
     }

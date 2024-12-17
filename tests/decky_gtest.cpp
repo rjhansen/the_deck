@@ -45,6 +45,19 @@ TEST(deck, copy_range)
     EXPECT_TRUE(deck.deck.size() == 5);
     EXPECT_TRUE(deck[0] == Card(0));
 }
+
+// deck: test random access into deck
+TEST(deck, random_access)
+{
+    auto deck = Deck();
+
+    EXPECT_TRUE(deck[0] == Card(0));
+    EXPECT_TRUE(deck[13] == Card(13));
+    EXPECT_TRUE(deck[26] == Card(26));
+    EXPECT_TRUE(deck[39] == Card(39));
+    EXPECT_TRUE(deck[52] == Card(52));
+}
+
 // deck: shuffle
 TEST(deck, shuffle)
 {
@@ -65,7 +78,6 @@ TEST(deck, shuffle)
                 deck[52] != Card(52));
 }
 
-// deck: test random access into deck
 // deck: sort
 // deck: deal from arbitrary position (top, middle, bottom)
 // deck: insert card into arbitrary position (top, middle, bottom)
