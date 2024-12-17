@@ -121,11 +121,19 @@ struct Deck
 
         void shuffle();
         void sort();
-        void remove_if(auto Pred);
-
         Card deal(const size_t position);
 
-
+        // This function is a templatized function, which means it MUST be implemented entirely in the header file
+        // This is because the preprocessor/compiler will need access to the full definition whenever it encounters it
+        // being called so that it can compute the correct types to build into the templates at compile time.
+        // This is because templates must be FULLY AVAILABLE to each compilation unit in which they are used.
+        void Deck::remove_if(auto Pred)
+        {
+            deck.erase(
+                std::remove_if(deck.begin(), deck.end(), Pred), // Arranges the vector such that the things to be erased are all at the end, and returns an iterator to the first object to be erased
+                deck.end()
+            );
+        }
 };
 
 
