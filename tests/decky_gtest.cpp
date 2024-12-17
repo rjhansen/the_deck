@@ -107,25 +107,44 @@ TEST(deck, sort)
 }
 
 // deck: deal from arbitrary position (top, middle, bottom)
-TEST(deck, deal_arbitrary)
+TEST(deck, deal_top)
 {
     auto deck = Deck();
     // Deal top
     EXPECT_TRUE(deck.deal(0) == Card(0) &&
                 deck[0] == Card(1) &&
-                deck.deck.size == 51);
-
-    // Deal bottom
-    EXPECT_TRUE(deck.deal(50) == Card(50) &&
-                *(deck.deck.end()-1) == Card(51) &&
-                deck.deck.size() == 50);
-
-    // Deal middle
-    EXPECT_TRUE(deck.deal(10) == Card(11) &&
-                deck.deck.size() == 49);
-
-
+                deck.deck.size() == 51);
 }
+
+TEST(deck, deal_bottom)
+{
+    auto deck = Deck();
+    // Deal bottom
+    EXPECT_TRUE(deck.deal(51) == Card(51) &&
+                *(deck.deck.end()-1) == Card(50) &&
+                deck.deck.size() == 51);
+}
+
+TEST(deck, deal_middle)
+{
+    auto deck = Deck();
+    // Deal middle
+    EXPECT_TRUE(deck.deal(10) == Card(10) &&
+                deck.deck.size() == 51);
+}
+
+// deck: remove arbitrary set of cards
+TEST(deck, arbitrary_cards)
+{
+    auto deck = Deck();
+    auto Pred = [](const Card& x){return x.SUIT == Suit::CLUB;}; // Lambda fxn that returns true if the card is a club
+
+    deck.remove_if(Pred);
+
+    for(const auto& curr_card: std::ranges::filter_view(deck.deck, Pred))
+        EXPECT_TRUE(false); // If there's ANYTHING in this set, then the test failed
+}
+
 // deck: insert card into arbitrary position (top, middle, bottom)
 
 // STRETCH GOAL: Implement Solitaire (crypto cipher)
