@@ -40,8 +40,8 @@ enum class Rank
 
 struct Card
 {
-    const Suit SUIT;
-    const Rank RANK;
+    Suit SUIT;
+    Rank RANK;
 
     Card(): SUIT{Suit::CLUB}, RANK{Rank::TWO}
     {}
@@ -70,13 +70,14 @@ struct Card
         {}
 
 
-    Card& operator =(const Card& other):
+    Card& operator =(const Card& other)
     {
         SUIT = other.SUIT;
         RANK = other.RANK;
 
         return *this;
     }
+
 
     bool operator <(const Card& other) const; // the const at the end tells the compiler that this will never change the state of the object
     bool operator ==(const Card& other) const;
