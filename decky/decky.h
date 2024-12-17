@@ -65,11 +65,19 @@ struct Card
                 throw std::range_error("Card rank must be in the range of 0-51");
         }
 
-/*
-    Card& operator =(const Card& other):
+    Card(const Card& other):
         SUIT{other.SUIT}, RANK{other.RANK}
         {}
-*/
+
+
+    Card& operator =(const Card& other):
+    {
+        SUIT = other.SUIT;
+        RANK = other.RANK;
+
+        return *this;
+    }
+
     bool operator <(const Card& other) const; // the const at the end tells the compiler that this will never change the state of the object
     bool operator ==(const Card& other) const;
 };
