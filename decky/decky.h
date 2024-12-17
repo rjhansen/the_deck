@@ -45,16 +45,16 @@ struct Card
         }
 
     // static_cast is a generic function that enforces type checks at compile time
-    Card(const uint32_t rank): 
-    // std::clamp allows you to have a compiler-guaranteed check on value ranges
-    //SUIT{static_cast<Suit>(rank/13)}, RANK{static_cast<Rank>(rank % 13)}
-    //SUIT{static_cast<Suit>(std::clamp(rank / 13, 0, 3))}, RANK{static_cast<Rank>(rank % 13)}
-    SUIT(static_cast<Suit>(std::clamp(rank / 13, 0, 3))),
-    RANK(static_cast<Rank>(rank % 13))
-    {
-        if(rank > 51)
-            throw std::range_error("Card rank must be in the range of 0-51");
-    }
+    Card(const int32_t rank): 
+        // std::clamp allows you to have a compiler-guaranteed check on value ranges
+        SUIT{static_cast<Suit>(std::clamp(rank / 13, 0, 3))},
+        RANK{static_cast<Rank>(rank % 13)}
+        // Older initializer style
+        //SUIT(static_cast<Suit>(std::clamp(rank / 13, 0, 3))), RANK(static_cast<Rank>(rank % 13))
+        {
+            if(rank < 0 || rank > 51)
+                throw std::range_error("Card rank must be in the range of 0-51");
+        }
 
     bool operator <(const Card& other) const; // the const at the end tells the compiler that this will never change the state of the object
     bool operator ==(const Card& other) const;
