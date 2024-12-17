@@ -28,8 +28,14 @@ TEST(card, eq_incorrect)
 }
 
 // deck: container of cards
-// deck: test random access into deck
 // deck: initially sorted
+TEST(deck, default_create)
+{
+    auto deck = Deck();
+    EXPECT_TRUE(deck.deck.at(0) == Card(0));
+    EXPECT_TRUE(deck.deck.at(51) == Card(51));
+}
+// deck: test random access into deck
 // deck: shuffle
 // deck: sort
 // deck: deal from arbitrary position (top, middle, bottom)

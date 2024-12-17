@@ -2,8 +2,11 @@
 #include <exception>
 #include <stdexcept>
 #include <algorithm>
+#include <iterator>
 #include <vector>
 #include <ranges>
+#include <numeric>
+#include <span>
 
 
 // Enum classes provide compiler guarantees of max and min values
@@ -69,14 +72,27 @@ struct Deck
 {
     std::vector<Card> deck;
 
+    // Creates a deck of cards, in order
     Deck()
     {
+        /*
+        // C++ 23 way; not supported by compilers yet
         std::vector<int> zero_to_51;
         std::ranges::iota(zero_to_51, 0);
-        std::ranges::transform(zero_to_51, std::emplace_back(deck), [](const int x) {return Card(x);});
+        std::ranges::transform(zero_to_51, deck.emplace_back(), [](const int x) {return Card(x);});
+        */
 
+        // C++ 20 way; slightly more verbose, but supported
+        std::vector<int> zero_to_51(52);
+        std::iota(zero_to_51.begin(), zero_to_51.end(), 0);
+        std::transform(zero_to_51.begin(), zero_to_51.end(), std::back_inserter(deck), [](const int x) {return Card(x);}); // lambda function to turn int to Card
     }
 
+    Deck(const std::span<const Card>& other_deck) 
+    {
+        deck.clear();
+        std::copy(other_deck.cbegin(), other_deck.cend(), std::back_inserter(deck));
+    }
 };
 
 
