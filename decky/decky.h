@@ -69,7 +69,6 @@ struct Card
         SUIT{other.SUIT}, RANK{other.RANK}
         {}
 
-
     Card& operator =(const Card& other)
     {
         SUIT = other.SUIT;
@@ -122,6 +121,10 @@ struct Deck
 
         void shuffle();
         void sort();
+        void remove_if(auto Pred);
+
+        Card deal(const size_t position);
+
 
 };
 

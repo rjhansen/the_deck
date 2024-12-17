@@ -24,3 +24,18 @@
     {
         std::sort(deck.begin(), deck.end());
     }
+
+    void Deck::remove_if(auto Pred)
+    {
+        deck.erase(
+            std::remove_if(deck.begin(), deck.end(), Pred), // Arranges the vector such that the things to be erased are all at the end, and returns an iterator to the first object to be erased
+            deck.end()
+        );
+    }
+
+    Card Deck::deal(const size_t position)
+    {
+        Card card(deck.at(position));
+        deck.erase(deck.begin() + position);
+        return card;
+    }

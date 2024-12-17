@@ -55,7 +55,7 @@ TEST(deck, random_access)
     EXPECT_TRUE(deck[13] == Card(13));
     EXPECT_TRUE(deck[26] == Card(26));
     EXPECT_TRUE(deck[39] == Card(39));
-    EXPECT_TRUE(deck[52] == Card(52));
+    EXPECT_TRUE(deck[51] == Card(51));
 }
 
 // deck: shuffle
@@ -67,7 +67,7 @@ TEST(deck, shuffle)
     EXPECT_TRUE(deck[13] == Card(13));
     EXPECT_TRUE(deck[26] == Card(26));
     EXPECT_TRUE(deck[39] == Card(39));
-    EXPECT_TRUE(deck[52] == Card(52));
+    EXPECT_TRUE(deck[51] == Card(51));
 
     deck.shuffle();
 
@@ -75,11 +75,57 @@ TEST(deck, shuffle)
                 deck[13] != Card(13) ||
                 deck[26] != Card(26) ||
                 deck[39] != Card(39) ||
-                deck[52] != Card(52));
+                deck[51] != Card(51));
 }
 
 // deck: sort
+TEST(deck, sort)
+{
+    auto deck = Deck();
+    
+    EXPECT_TRUE(deck[0] == Card(0));
+    EXPECT_TRUE(deck[13] == Card(13));
+    EXPECT_TRUE(deck[26] == Card(26));
+    EXPECT_TRUE(deck[39] == Card(39));
+    EXPECT_TRUE(deck[51] == Card(51));
+
+    deck.shuffle();
+
+    EXPECT_TRUE(deck[0]  != Card(0)  || 
+                deck[13] != Card(13) ||
+                deck[26] != Card(26) ||
+                deck[39] != Card(39) ||
+                deck[51] != Card(51));
+
+    deck.sort();
+
+    EXPECT_TRUE(deck[0] == Card(0));
+    EXPECT_TRUE(deck[13] == Card(13));
+    EXPECT_TRUE(deck[26] == Card(26));
+    EXPECT_TRUE(deck[39] == Card(39));
+    EXPECT_TRUE(deck[51] == Card(51));
+}
+
 // deck: deal from arbitrary position (top, middle, bottom)
+TEST(deck, deal_arbitrary)
+{
+    auto deck = Deck();
+    // Deal top
+    EXPECT_TRUE(deck.deal(0) == Card(0) &&
+                deck[0] == Card(1) &&
+                deck.deck.size == 51);
+
+    // Deal bottom
+    EXPECT_TRUE(deck.deal(50) == Card(50) &&
+                *(deck.deck.end()-1) == Card(51) &&
+                deck.deck.size() == 50);
+
+    // Deal middle
+    EXPECT_TRUE(deck.deal(10) == Card(11) &&
+                deck.deck.size() == 49);
+
+
+}
 // deck: insert card into arbitrary position (top, middle, bottom)
 
 // STRETCH GOAL: Implement Solitaire (crypto cipher)
