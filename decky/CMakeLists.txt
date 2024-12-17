@@ -1,4 +1,6 @@
 set(LIBDECKY_SRC card.cpp deck.cpp)
+set(APPDECKY_SRC decky.cpp)
+
 add_library(decky STATIC)
 
 target_sources(decky
@@ -14,4 +16,4 @@ if (MSVC)
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 endif()
 
-add_executable(${PROJECT_NAME} ${LIBDECKY_SRC})
+add_executable(${PROJECT_NAME} ${LIBDECKY_SRC} ${APPDECKY_SRC})

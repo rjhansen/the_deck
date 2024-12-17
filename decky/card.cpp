@@ -3,7 +3,7 @@
 // Card method definitions
 bool Card::operator <(const Card& other) const // the const at the end tells the compiler that this will never change the state of the object
 {
-    if(other.RANK == Rank::JOKER):
+    if(other.RANK == Rank::JOKER)
         return false;
 
     auto suit = static_cast<uint32_t>(SUIT);

@@ -1,5 +1,6 @@
 #include <cstdint>
 #include <exception>
+#include <stdexcept>
 #include <algorithm>
 
 
@@ -44,9 +45,12 @@ struct Card
         }
 
     // static_cast is a generic function that enforces type checks at compile time
-    Card(uint32_t rank)
-        // std::clamp allows you to have a compiler-guaranteed check on value ranges
-        SUIT{static_cast<SUIT>(std::clamp(rank / 13, 0, 3)}, RANK{static_cast<RANK>(rank % 13)}
+    Card(const uint32_t rank): 
+    // std::clamp allows you to have a compiler-guaranteed check on value ranges
+    //SUIT{static_cast<Suit>(rank/13)}, RANK{static_cast<Rank>(rank % 13)}
+    //SUIT{static_cast<Suit>(std::clamp(rank / 13, 0, 3))}, RANK{static_cast<Rank>(rank % 13)}
+    SUIT(static_cast<Suit>(std::clamp(rank / 13, 0, 3))),
+    RANK(static_cast<Rank>(rank % 13))
     {
         if(rank > 51)
             throw std::range_error("Card rank must be in the range of 0-51");
