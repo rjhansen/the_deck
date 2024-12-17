@@ -11,7 +11,7 @@
     { 
         return deck.at(index);
     }
-
+    
     void Deck::shuffle()
     {
         std::random_device rd;
@@ -30,4 +30,16 @@
         Card card(deck.at(position));
         deck.erase(deck.begin() + position);
         return card;
+    }
+
+    void Deck::insert(const Card& card, const size_t position)
+    {
+        if(position == deck.size())
+            deck.push_back(card);
+        else
+        {
+            auto c = deck.at(position); // takes care of bounds checks, because vector.at() does bounds checking
+            deck.insert(deck.begin() + position, card);
+        }
+
     }

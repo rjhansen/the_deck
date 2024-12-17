@@ -77,7 +77,6 @@ struct Card
         return *this;
     }
 
-
     bool operator <(const Card& other) const; // the const at the end tells the compiler that this will never change the state of the object
     bool operator ==(const Card& other) const;
 };
@@ -122,6 +121,8 @@ struct Deck
         void shuffle();
         void sort();
         Card deal(const size_t position);
+        void insert(const Card& card, const size_t position);
+
 
         // This function is a templatized function, which means it MUST be implemented entirely in the header file
         // This is because the preprocessor/compiler will need access to the full definition whenever it encounters it
@@ -134,6 +135,9 @@ struct Deck
                 deck.end()
             );
         }
+
+        // This one, too.
+        size_t size() { return deck.size(); }
 };
 
 

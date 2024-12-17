@@ -1,3 +1,4 @@
+#include <print>
 #include <gtest/gtest.h>
 #include "decky.h"
 
@@ -13,6 +14,8 @@ TEST(card, deck_rank_too_high)
 TEST(card, lt_correct)
 {
     EXPECT_TRUE(Card(0) < Card(1));
+    EXPECT_TRUE(Card(Suit::NONE, Rank::JOKER) < Card(0));
+    EXPECT_FALSE(Card(Suit::NONE, Rank::JOKER) < Card(Suit::NONE, Rank::JOKER));
 }
 TEST(card, lt_incorrect)
 {
@@ -36,10 +39,17 @@ TEST(deck, default_create)
     EXPECT_TRUE(deck[51] == Card(51));
 }
 
+// deck: size
+TEST(deck, size)
+{
+    auto deck = Deck();
+    EXPECT_TRUE(deck.size() == 52);
+}
+
 // deck: copy from one range of cards to a deck
 TEST(deck, copy_range)
 {
-    Card cards[5] = {Card(0), Card(1), Card(2), Card(3), Card(4) };
+    Card cards[5] = {Card(0), Card(1), Card(2), Card(3), Card(4)};
     auto deck = Deck(cards);
 
     EXPECT_TRUE(deck.deck.size() == 5);
@@ -141,10 +151,24 @@ TEST(deck, arbitrary_cards)
 
     deck.remove_if(Pred);
 
+    // filter_view returns a view of a range, returning only the objects where Pred is true
     for(const auto& curr_card: std::ranges::filter_view(deck.deck, Pred))
         EXPECT_TRUE(false); // If there's ANYTHING in this set, then the test failed
 }
 
 // deck: insert card into arbitrary position (top, middle, bottom)
+TEST(deck, insert_arbitrary)
+{
+    auto deck = Deck();
+    Card joker = Card(Suit::NONE, Rank::JOKER);
+
+    deck.insert(joker, 52);
+
+    EXPECT_TRUE(deck[52] == joker);
+    EXPECT_THROW(deck.insert(joker, 100), std::out_of_range);
+    //std::print("Joker: Suit: {}, Rank: {}\n", static_cast<int>(joker.SUIT), static_cast<int>(joker.RANK));
+    //std::print("Deck[52]: Suit: {}, Rank: {}\n", static_cast<int>(deck[52].SUIT), static_cast<int>(deck[52].RANK));
+
+}
 
 // STRETCH GOAL: Implement Solitaire (crypto cipher)
