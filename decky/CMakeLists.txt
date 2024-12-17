@@ -1,8 +1,8 @@
-set(LIBDECKY decky.cpp card.cpp deck.cpp)
+set(LIBDECKY_SRC card.cpp deck.cpp)
 add_library(decky STATIC)
 
 target_sources(decky
-    PUBLIC ${LIBDECKY}
+    PUBLIC ${LIBDECKY_SRC}
     PUBLIC FILE_SET HEADERS
     BASE_DIRS . FILES
     ./decky.h
@@ -13,3 +13,5 @@ target_sources(decky
 if (MSVC)
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 endif()
+
+add_executable(${PROJECT_NAME} ${LIBDECKY_SRC})

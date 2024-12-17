@@ -7,7 +7,7 @@
 TEST(card, deck_rank_too_high)
 {
     EXPECT_THROW(Card(52), std::range_error);
-}
+};
 //TEST(card, lt_correct){}
 //TEST(card, lt_incorrect){}
 //TEST(card, eq_correct){}

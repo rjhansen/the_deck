@@ -1,4 +1,4 @@
-cmake_minimum_requirements(VERSION 3.29.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.29.0 FATAL_ERROR)
 
 # C++ Language-specific variables, setting build env constraints
 set(CMAKE_CXX_STANDARD 23)
@@ -9,7 +9,7 @@ set(CMAKE_C_STANDARD_REQUIRED On)
 set(CMAKE_C_EXTENSIONS Off)
 set(CMAKE_PROJECT_HOMEPAGE_URL "https://github.com/elibster/the_deck")
 
-project(Decky
+project(The_Deck
     VERSION 1.0.0
     DESCRIPTION "The deck of all things learning"
     LANGUAGES CXX C
