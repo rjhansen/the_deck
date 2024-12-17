@@ -6,6 +6,7 @@
 #include <vector>
 #include <ranges>
 #include <numeric>
+#include <random>
 #include <span>
 
 
@@ -70,29 +71,43 @@ struct Card
 
 struct Deck
 {
-    std::vector<Card> deck;
+    private:
+        std::random_device rd;
+        std::mt19937 gen; // Mersenne Twister (1993) PRNG
 
-    // Creates a deck of cards, in order
-    Deck()
-    {
-        /*
-        // C++ 23 way; not supported by compilers yet
-        std::vector<int> zero_to_51;
-        std::ranges::iota(zero_to_51, 0);
-        std::ranges::transform(zero_to_51, deck.emplace_back(), [](const int x) {return Card(x);});
-        */
+    public:
+        std::vector<Card> deck;
+        // Creates a deck of cards, in order
+        Deck(): rd(), gen(rd) // No curly brackets needed when calling a constructor directly
+        {
+            /*
+            // C++ 23 way; not supported by compilers yet
+            std::vector<int> zero_to_51;
+            std::ranges::iota(zero_to_51, 0);
+            std::ranges::transform(zero_to_51, deck.emplace_back(), [](const int x) {return Card(x);});
+            */
 
-        // C++ 20 way; slightly more verbose, but supported
-        std::vector<int> zero_to_51(52);
-        std::iota(zero_to_51.begin(), zero_to_51.end(), 0);
-        std::transform(zero_to_51.begin(), zero_to_51.end(), std::back_inserter(deck), [](const int x) {return Card(x);}); // lambda function to turn int to Card
-    }
+            // C++ 20 way; slightly more verbose, but supported
+            std::vector<int> zero_to_51(52);
+            std::iota(zero_to_51.begin(), zero_to_51.end(), 0);
+            std::transform(zero_to_51.begin(), zero_to_51.end(), std::back_inserter(deck), [](const int x) {return Card(x);}); // lambda function to turn int to Card
+        }
 
-    Deck(const std::span<const Card>& other_deck) 
-    {
-        deck.clear();
-        std::copy(other_deck.cbegin(), other_deck.cend(), std::back_inserter(deck));
-    }
+        // C++ 20 way; slightly more wordy
+        // MAGIC LIES HERE: 
+        // std::span will MAGICALLY figure out the size of the input data, even with standard C arrays that don't know their own size.
+        // So always accept inputs as std::span, and it will make your code WAY more reliable
+        Deck(const std::span<const Card>& other_deck): gen(std::random_device())
+        {
+            deck.clear();
+            std::copy(other_deck.cbegin(), other_deck.cend(), std::back_inserter(deck));
+        }
+
+        Card& operator[](const size_t index);
+        const Card& operator[](const size_t index) const;
+
+        void shuffle();
+
 };
 
 
