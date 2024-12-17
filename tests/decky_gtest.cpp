@@ -8,11 +8,24 @@ TEST(card, deck_rank_too_high)
 {
     EXPECT_THROW(Card(52), std::range_error);
 };
-//TEST(card, lt_correct){}
-//TEST(card, lt_incorrect){}
-//TEST(card, eq_correct){}
-//TEST(card, eq_incorrect){}
+
 // card: less_than, equal
+TEST(card, lt_correct)
+{
+    EXPECT_TRUE(Card(0) < Card(1));
+}
+TEST(card, lt_incorrect)
+{
+    EXPECT_FALSE(Card(1) < Card(0));
+}
+TEST(card, eq_correct)
+{
+    EXPECT_TRUE(Card(0) == Card(0));
+}
+TEST(card, eq_incorrect)
+{
+    EXPECT_FALSE(Card(0) == Card(1));
+}
 
 // deck: container of cards
 // deck: test random access into deck

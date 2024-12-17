@@ -2,6 +2,8 @@
 #include <exception>
 #include <stdexcept>
 #include <algorithm>
+#include <vector>
+#include <ranges>
 
 
 // Enum classes provide compiler guarantees of max and min values
@@ -37,6 +39,9 @@ struct Card
     const Suit SUIT;
     const Rank RANK;
 
+    Card(): SUIT{Suit::CLUB}, RANK{Rank::TWO}
+    {}
+
     Card(const Suit suit, const Rank rank):
         SUIT{suit}, RANK{rank} // Initialize member variables (new style)
         // Makes the initialization of the member variables essentially atomic
@@ -60,32 +65,19 @@ struct Card
     bool operator ==(const Card& other) const;
 };
 
+struct Deck
+{
+    std::vector<Card> deck;
 
+    Deck()
+    {
+        std::vector<int> zero_to_51;
+        std::ranges::iota(zero_to_51, 0);
+        std::ranges::transform(zero_to_51, std::emplace_back(deck), [](const int x) {return Card(x);});
 
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+};
 
 
 
