@@ -207,24 +207,15 @@ TEST(deck, triple_cut)
         //deck.deck.push_back(Card(Suit::NONE, Rank::JOKER_B));
         deck.insert(Card(Suit::NONE, Rank::JOKER_A), 0);
         deck.insert(Card(Suit::NONE, Rank::JOKER_B), 53);
-
         deck.triple_cut();
 
         for(size_t i = 0; i < deck2.size(); i++)
-        {
             EXPECT_TRUE(deck[i+1] == deck2[i]); // one card ahead of the increment (the first joker)
-            std::print("Deck[{}]: Suit: {}, Rank: {}, Deck2[{}]: Suit {}, Rank: {}\n", 
-                        i+1,
-                        static_cast<int>(deck[i+1].SUIT), static_cast<int>(deck[i+1].RANK),
-                        i,
-                        static_cast<int>(deck2[i].SUIT), static_cast<int>(deck2[i].RANK));
-
-        }
         EXPECT_TRUE(*(deck.deck.crbegin()) == Card(Suit::NONE, Rank::JOKER_B));
 
     }
 
-/*
+
     {
         // Standard case: both jokers somewhere in the deck, Joker A first
         auto deck = Deck();
@@ -253,7 +244,7 @@ TEST(deck, triple_cut)
         EXPECT_TRUE(deck[13] == Card(Suit::NONE, Rank::JOKER_A));
         EXPECT_TRUE(deck[30] == Card(Suit::NONE, Rank::JOKER_B));
     }
-*/
+
 
     // Edge case: both jokers next to each other in the middle, Joker A first
 
