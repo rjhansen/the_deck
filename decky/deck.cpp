@@ -136,3 +136,9 @@ void Deck::count_cut()
     deck.erase(deck.begin(), deck.begin()+index);
     deck.insert(deck.end()-1, temp_cards.begin(), temp_cards.end());
 }
+
+uint32_t Deck::get_keystream_value()
+{
+    auto index = deck.begin()->card_as_int() + 1; // Solitaire's value of a card is 1 more than ours, so count an extra card down
+    return static_cast<uint32_t>(deck.at(index).card_as_int()) + 1; // return solitaire's value rather than ours
+}

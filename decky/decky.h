@@ -140,6 +140,7 @@ struct Deck
         void bury_joker_a();
         void bury_joker_b();
         void count_cut();
+        uint32_t get_keystream_value();
 
 
         // This function is a templatized function, which means it MUST be implemented entirely in the header file

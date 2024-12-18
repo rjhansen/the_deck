@@ -415,12 +415,20 @@ TEST(solitaire_ks, count_cut)
     deck.triple_cut();
     deck.count_cut();
     EXPECT_TRUE(deck[53] == Card(9));
-
-
-
 }
-
 
 // solitaire_ks: look at the value of the top card. Either joker is 53. Count this many places below that card and take the value
 //               of that card as the next value in the keystream. If the card counted to is either joker, ignore it and repeat the
 //               keystream algorithm.
+TEST(solitaire_ks, get_keystream_value)
+{
+    auto deck = Deck();
+    auto joker_a = Card(Suit::NONE, Rank::JOKER_A);
+    auto joker_b = Card(Suit::NONE, Rank::JOKER_B);
+
+    deck.insert(joker_a, 52);
+    deck.insert(joker_b, 10);
+
+    auto keystream_val = deck.get_keystream_value();
+    EXPECT_TRUE(keystream_val == 2);
+}
