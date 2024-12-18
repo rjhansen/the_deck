@@ -185,6 +185,14 @@ TEST(deck, insert_arbitrary)
 //       Part of the solitaire crypto algorithm
 TEST(deck, triple_cut)
 {
+    // Edge case: not enough jokers
+    {
+        auto deck = Deck();
+        EXPECT_THROW(deck.triple_cut(), std::exception);
+
+        deck.insert(Card(Suit::NONE, Rank::JOKER_A), 10);
+        EXPECT_THROW(deck.triple_cut(), std::exception);
+    }
     {
         // Edge case: jokers on top and bottom, Joker A first
         auto deck = Deck();

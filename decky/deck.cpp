@@ -31,14 +31,11 @@
 
     void Deck::insert(const Card& card, const size_t position)
     {
-        if(position == deck.size())
+        if(position >= deck.size())
+            // If someone gives us a position that's too large, just stick the card at the back of the deck
             deck.push_back(card);
         else
-        {
-            auto c = &deck.at(position); // takes care of bounds checks, because vector.at() does bounds checking
-            deck.insert(c, card);
-        }
-
+            deck.insert(deck.cbegin() + position, card);
     }
 
     void Deck::triple_cut()
