@@ -81,7 +81,7 @@ struct Card
     bool operator <(const Card& other) const; // the const at the end tells the compiler that this will never change the state of the object
     bool operator ==(const Card& other) const;
 
-    int32_t card_as_int();
+    int32_t card_as_int() const;
 
 };
 
@@ -91,11 +91,11 @@ struct Deck
         std::random_device rd;
         std::mt19937 gen; // Mersenne Twister (1993) PRNG
 
-        // This is too new.
+        // This is too new. We've been doing it this way since 1998, but apparently MSVC disagrees.
         //static const Card JOKER_A(Suit::NONE, Rank::JOKER_A);
         //static const Card JOKER_B(Suit::NONE, Rank::JOKER_B);
         
-        // Old style, but works
+        // Old style, but works. See deck.cpp for the instantiation.
         static const Card JOKER_A;
         static const Card JOKER_B;
 
