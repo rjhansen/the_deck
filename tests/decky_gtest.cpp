@@ -172,9 +172,10 @@ TEST(deck, insert_arbitrary)
     Card joker = Card(Suit::NONE, Rank::JOKER_A);
 
     deck.insert(joker, 52);
-
     EXPECT_TRUE(deck[52] == joker);
-    EXPECT_THROW(deck.insert(joker, 100), std::out_of_range);
+
+    deck.insert(joker, 100);
+    EXPECT_TRUE(deck[53] == joker);
     //std::print("Joker: Suit: {}, Rank: {}\n", static_cast<int>(joker.SUIT), static_cast<int>(joker.RANK));
     //std::print("Deck[52]: Suit: {}, Rank: {}\n", static_cast<int>(deck[52].SUIT), static_cast<int>(deck[52].RANK));
 
