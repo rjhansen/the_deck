@@ -193,9 +193,13 @@ TEST(deck, triple_cut)
 
         deck.insert(Card(Suit::NONE, Rank::JOKER_A), 10);
         EXPECT_THROW(deck.triple_cut(), std::logic_error);
+
+        deck.insert(Card(Suit::NONE, Rank::JOKER_A), 10);
+        EXPECT_THROW(deck.triple_cut(), std::logic_error);
     }
+
+    // Edge case: jokers on top and bottom, Joker A first
     {
-        // Edge case: jokers on top and bottom, Joker A first
         auto deck = Deck();
         auto deck2 = Deck();
 
@@ -204,10 +208,10 @@ TEST(deck, triple_cut)
         deck.insert(Card(Suit::NONE, Rank::JOKER_A), 0);
         deck.insert(Card(Suit::NONE, Rank::JOKER_B), 52);
 
-        deck.triple_cut();
         for(size_t i = 0; i < deck.size(); i++)
             std::print("Deck[{}]: Suit: {}, Rank: {}\n", i, static_cast<int>(deck[i].SUIT), static_cast<int>(deck[i].RANK));
 
+        deck.triple_cut();
 
         for(size_t i = 0; i < deck2.size(); i++)
         {
@@ -225,7 +229,7 @@ TEST(deck, triple_cut)
 
 /*
     {
-        // Standard: both jokers somewhere in the deck, Joker A first
+        // Standard case: both jokers somewhere in the deck, Joker A first
         auto deck = Deck();
         auto deck2 = Deck();
 
