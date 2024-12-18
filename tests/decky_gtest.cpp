@@ -39,11 +39,11 @@ TEST(card, eq_incorrect)
     EXPECT_FALSE(Card(0) == Card(1));
 }
 
-TEST(card, card_as_int)
+TEST(card, test_card_as_int)
 {
-    EXPECT_EQ(Card(0).card_as_int() == 0);
-    EXPECT_EQ(Card(10).card_as_int() == 10);
-    EXPECT_EQ(Card(20).card_as_int() == 20);
+    EXPECT_TRUE(Card(0).card_as_int() == 0);
+    EXPECT_TRUE(Card(10).card_as_int() == 10);
+    EXPECT_TRUE(Card(20).card_as_int() == 20);
 }
 
 // deck: container of cards

@@ -128,8 +128,11 @@ void Deck::count_cut()
 {
     const Card& last_card = *(deck.end()-1);
     auto index = last_card.card_as_int() + 1; // The cards ALWAYS move by at least 1 position
-    std::vector<Card> temp_cards(deck.begin(), deck.begin() + index);
 
+    if(index == deck.size())
+        return;
+
+    std::vector<Card> temp_cards(deck.begin(), deck.begin() + index);
     deck.erase(deck.begin(), deck.begin()+index);
     deck.insert(deck.end()-1, temp_cards.begin(), temp_cards.end());
 }

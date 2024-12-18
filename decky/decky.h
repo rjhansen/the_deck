@@ -82,7 +82,6 @@ struct Card
     bool operator ==(const Card& other) const;
 
     int32_t card_as_int() const;
-
 };
 
 struct Deck
