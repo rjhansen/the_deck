@@ -414,7 +414,7 @@ TEST(solitaire_ks, count_cut)
 
     deck.triple_cut();
     deck.count_cut();
-    EXPECT_TRUE(deck[53] == 0);
+    EXPECT_TRUE(deck[53] == Card(9));
 
 
 
