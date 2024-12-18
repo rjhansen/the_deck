@@ -188,10 +188,10 @@ TEST(deck, triple_cut)
     // Edge case: not enough jokers
     {
         auto deck = Deck();
-        EXPECT_THROW(deck.triple_cut(), std::exception);
+        EXPECT_THROW(deck.triple_cut(), std::logic_error);
 
         deck.insert(Card(Suit::NONE, Rank::JOKER_A), 10);
-        EXPECT_THROW(deck.triple_cut(), std::exception);
+        EXPECT_THROW(deck.triple_cut(), std::logic_error);
     }
     {
         // Edge case: jokers on top and bottom, Joker A first
@@ -204,8 +204,8 @@ TEST(deck, triple_cut)
         deck.insert(Card(Suit::NONE, Rank::JOKER_B), 52);
 
         deck.triple_cut();
-        //for(size_t i = 0; i < deck.size(); i++)
-        //    std::print("Deck[{}]: Suit: {}, Rank: {}\n", i, static_cast<int>(deck[i].SUIT), static_cast<int>(deck[i].RANK));
+        for(size_t i = 0; i < deck.size(); i++)
+            std::print("Deck[{}]: Suit: {}, Rank: {}\n", i, static_cast<int>(deck[i].SUIT), static_cast<int>(deck[i].RANK));
 
 
         for(size_t i = 0; i < deck2.size(); i++)

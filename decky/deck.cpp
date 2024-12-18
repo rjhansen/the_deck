@@ -1,3 +1,4 @@
+#include <stdexcept>
 
 #include "decky.h"
 
@@ -45,14 +46,14 @@
                                         [](const auto& card){ return (card.RANK == Rank::JOKER_A || card.RANK == Rank::JOKER_B);}
                                         );
         if(first_joker == deck.cend())  // Test if there are not enough jokers in the deck
-            throw std::exception("No jokers found while trying to perform a triple cut. We need two.");
+            throw std::logic_error("No jokers found while trying to perform a triple cut. We need two.");
 
         auto second_joker = std::find_if(first_joker + 1,
                                          deck.end(),
                                          [](const auto& card){ return (card.RANK == Rank::JOKER_A || card.RANK == Rank::JOKER_B);}
                                         );
         if(second_joker == deck.cend())
-            throw std::exception("Only one joker found while trying to perform a triple cut. We need two.");
+            throw std::logic_error("Only one joker found while trying to perform a triple cut. We need two.");
         
 
         // If you don't want to have to type std:: in front of every std function,
