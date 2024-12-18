@@ -1,5 +1,5 @@
 set(LIBDECKY_SRC card.cpp deck.cpp)
-set(APPDECKY_SRC decky.cpp)
+set(APPDECKY_SRC solitaire.cpp)
 
 add_library(decky STATIC)
 
