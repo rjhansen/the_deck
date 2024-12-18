@@ -1,7 +1,7 @@
 #include <print>
 #include "decky.h"
 
-uint32_t get_keystream(Deck& deck)
+uint32_t get_keystream_value(Deck& deck)
 {
     uint32_t ks_val = 53;
 
@@ -24,8 +24,9 @@ int main(void)
 
     deck.insert(joker_a, 52);
     deck.insert(joker_b, 10);
+    //deck.shuffle();
 
     for (int i = 0; i < 10; i++)
-        std::print("{} ", get_keystream(deck));
+        std::print("{} ", get_keystream_value(deck));
     std::print("\n");
 }
