@@ -35,7 +35,8 @@ enum class Rank
     QUEEN,
     KING,
     ACE,
-    JOKER
+    JOKER_A,
+    JOKER_B
 };
 
 struct Card
@@ -122,6 +123,8 @@ struct Deck
         void sort();
         Card deal(const size_t position);
         void insert(const Card& card, const size_t position);
+        void triple_cut();
+        void count_cut();
 
 
         // This function is a templatized function, which means it MUST be implemented entirely in the header file
@@ -137,7 +140,7 @@ struct Deck
         }
 
         // This one, too.
-        size_t size() { return deck.size(); }
+        size_t size() const { return deck.size(); }
 };
 
 

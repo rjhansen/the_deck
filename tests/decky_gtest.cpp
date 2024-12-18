@@ -14,16 +14,25 @@ TEST(card, deck_rank_too_high)
 TEST(card, lt_correct)
 {
     EXPECT_TRUE(Card(0) < Card(1));
-    EXPECT_TRUE(Card(Suit::NONE, Rank::JOKER) < Card(0));
-    EXPECT_FALSE(Card(Suit::NONE, Rank::JOKER) < Card(Suit::NONE, Rank::JOKER));
+    EXPECT_TRUE(Card(Suit::NONE, Rank::JOKER_A) < Card(0));
+    EXPECT_TRUE(Card(Suit::NONE, Rank::JOKER_B) < Card(0));
 }
 TEST(card, lt_incorrect)
 {
+    EXPECT_FALSE(Card(0) < Card(0));
     EXPECT_FALSE(Card(1) < Card(0));
+    EXPECT_FALSE(Card(Suit::NONE, Rank::JOKER_A) < Card(Suit::NONE, Rank::JOKER_A));
+    EXPECT_FALSE(Card(Suit::NONE, Rank::JOKER_A) < Card(Suit::NONE, Rank::JOKER_B));
+    EXPECT_FALSE(Card(Suit::NONE, Rank::JOKER_B) < Card(Suit::NONE, Rank::JOKER_A));
+    EXPECT_FALSE(Card(Suit::NONE, Rank::JOKER_B) < Card(Suit::NONE, Rank::JOKER_B));
 }
 TEST(card, eq_correct)
 {
     EXPECT_TRUE(Card(0) == Card(0));
+    EXPECT_TRUE(Card(Suit::NONE, Rank::JOKER_A) == Card(Suit::NONE, Rank::JOKER_A));
+    EXPECT_TRUE(Card(Suit::NONE, Rank::JOKER_A) == Card(Suit::NONE, Rank::JOKER_B));
+    EXPECT_TRUE(Card(Suit::NONE, Rank::JOKER_B) == Card(Suit::NONE, Rank::JOKER_A));
+    EXPECT_TRUE(Card(Suit::NONE, Rank::JOKER_B) == Card(Suit::NONE, Rank::JOKER_B));
 }
 TEST(card, eq_incorrect)
 {
@@ -160,7 +169,7 @@ TEST(deck, arbitrary_cards)
 TEST(deck, insert_arbitrary)
 {
     auto deck = Deck();
-    Card joker = Card(Suit::NONE, Rank::JOKER);
+    Card joker = Card(Suit::NONE, Rank::JOKER_A);
 
     deck.insert(joker, 52);
 
@@ -171,4 +180,84 @@ TEST(deck, insert_arbitrary)
 
 }
 
+// deck: triple cut: split deck into sections delimited by jokers, exchange the top and bottom section. 
+//       Jokers and cards between them stay.
+//       Part of the solitaire crypto algorithm
+TEST(deck, triple_cut)
+{
+    {
+        // Edge case: jokers on top and bottom, Joker A first
+        auto deck = Deck();
+        auto deck2 = Deck();
+
+        //deck.deck.insert(deck.deck.begin(), Card(Suit::NONE, Rank::JOKER_A));
+        //deck.deck.push_back(Card(Suit::NONE, Rank::JOKER_B));
+        deck.insert(Card(Suit::NONE, Rank::JOKER_A), 0);
+        deck.insert(Card(Suit::NONE, Rank::JOKER_B), 52);
+
+        deck.triple_cut();
+        //for(size_t i = 0; i < deck.size(); i++)
+        //    std::print("Deck[{}]: Suit: {}, Rank: {}\n", i, static_cast<int>(deck[i].SUIT), static_cast<int>(deck[i].RANK));
+
+
+        for(size_t i = 0; i < deck2.size(); i++)
+        {
+            EXPECT_TRUE(deck[i+1] == deck2[i]); // one card ahead of the increment (the first joker)
+            std::print("Deck[{}]: Suit: {}, Rank: {}, Deck2[{}]: Suit {}, Rank: {}\n", 
+                        i+1,
+                        static_cast<int>(deck[i+1].SUIT), static_cast<int>(deck[i+1].RANK),
+                        i,
+                        static_cast<int>(deck2[i].SUIT), static_cast<int>(deck2[i].RANK));
+
+        }
+        EXPECT_TRUE(*(deck.deck.crbegin()) == Card(Suit::NONE, Rank::JOKER_B));
+
+    }
+
+/*
+    {
+        // Standard: both jokers somewhere in the deck, Joker A first
+        auto deck = Deck();
+        auto deck2 = Deck();
+
+        deck.insert(Card(Suit::NONE, Rank::JOKER_A), 13);
+        deck.insert(Card(Suit::NONE, Rank::JOKER_B), 30);
+        deck.triple_cut();
+
+        auto joker_a = std::find(deck.deck.cbegin(), deck.deck.cend(), Card(Suit::NONE, Rank::JOKER_A));
+        auto joker_b = std::find(deck.deck.cbegin(), deck.deck.cend(), Card(Suit::NONE, Rank::JOKER_B));
+        
+
+        // auto tup = std::tuple(deck, Card(0));
+        // the auto[iter, i] is how you declare a tuple in C++ and then do a destructuring bind on it.
+        // This allows you to access each tuple member individually, rather than having to do a std::get() on each member.
+        for(auto[iter, i]=std::tuple(deck.deck.cbegin(), 0); iter < joker_a; iter++, i++)
+            EXPECT_TRUE(*iter == deck2[i]);
+        
+        for(auto[iter, i]=std::tuple(joker_a+1, std::distance(joker_a, deck.deck.cbegin())); iter < joker_b; iter++, i++)
+            EXPECT_TRUE(*iter == deck2[i]);
+
+        for(auto[iter, i]=std::tuple(joker_b+1, std::distance(deck.deck.cend(), joker_b)); iter < deck.deck.cend(); iter++, i++)
+            EXPECT_TRUE(*iter == deck2[i]);
+
+        EXPECT_TRUE(deck[13] == Card(Suit::NONE, Rank::JOKER_A));
+        EXPECT_TRUE(deck[30] == Card(Suit::NONE, Rank::JOKER_B));
+    }
+*/
+
+    // Edge case: both jokers next to each other in the middle, Joker A first
+
+}
+
 // STRETCH GOAL: Implement Solitaire (crypto cipher)
+// solitaire_ks: triple cut: See tests for deck
+//               
+
+// solitaire_ks: locate the A joker, and move it down by 1. If it's at the end of the deck, move it by 2 (so it's the second card)
+// solitaire_ks: locate the B joker and move it down by 2. If it's the second-to-last card, it becomes the 2nd card.
+//               If it's last, it becomes 3rd.
+// solitaire_ks: count cut: look at the value of the bottom card, if it's either joker, then its value is 53.
+//               Remove that many cards from the top of the deck and insert them just above the last card in the deck.
+// solitaire_ks: look at the value of the top card. Either joker is 53. Count this many places below that card and take the value
+//               of that card as the next value in the keystream. If the card counted to is either joker, ignore it and repeat the
+//               keystream algorithm.
