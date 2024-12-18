@@ -1,3 +1,4 @@
+#include <print>
 #include "decky.h"
 
 uint32_t get_keystream(Deck& deck)
