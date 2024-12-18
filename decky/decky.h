@@ -90,8 +90,15 @@ struct Deck
     private:
         std::random_device rd;
         std::mt19937 gen; // Mersenne Twister (1993) PRNG
-        static const Card JOKER_A(Suit::NONE, Rank::JOKER_A);
-        static const Card JOKER_B(Suit::NONE, Rank::JOKER_B);
+
+        // This is too new.
+        //static const Card JOKER_A(Suit::NONE, Rank::JOKER_A);
+        //static const Card JOKER_B(Suit::NONE, Rank::JOKER_B);
+        
+        // Old style, but works
+        static const Card JOKER_A;
+        static const Card JOKER_B;
+
 
     public:
         std::vector<Card> deck;
@@ -129,7 +136,6 @@ struct Deck
         Card deal(const size_t position);
         void insert(const Card& card, const size_t position);
         void triple_cut();
-        void count_cut();
         void bury_1_with_wraparound(const Card& card);
         void bury_with_wraparound(const Card& card, const size_t slots_down);
         void bury_joker_a();
