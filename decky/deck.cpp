@@ -64,8 +64,8 @@
         std::vector<Card> after_second_joker(second_joker+1, deck.end());
 
         // Remove the parts outside the jokers from the deck
-        deck.erase(deck.begin(), first_joker);
         deck.erase(second_joker+1, deck.end());
+        deck.erase(deck.begin(), first_joker);
 
         // Append the middle portion after the original last portion, and then append the first portion to that
         std::copy(deck.cbegin(), deck.cend(), std::back_inserter(after_second_joker));
