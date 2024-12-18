@@ -198,6 +198,7 @@ TEST(deck, triple_cut)
         deck2.insert(Card(Suit::NONE, Rank::JOKER_B), 10);
         EXPECT_THROW(deck.triple_cut(), std::logic_error);
     }
+
     // Edge case: jokers on top and bottom, Joker A first
     {
         auto deck = Deck();
@@ -212,40 +213,40 @@ TEST(deck, triple_cut)
         for(size_t i = 0; i < deck2.size(); i++)
             EXPECT_TRUE(deck[i+1] == deck2[i]); // one card ahead of the increment (the first joker)
         EXPECT_TRUE(*(deck.deck.crbegin()) == Card(Suit::NONE, Rank::JOKER_B));
-
     }
 
-
+    // Standard case: both jokers somewhere in the deck, Joker A first
     {
-        // Standard case: both jokers somewhere in the deck, Joker A first
         auto deck = Deck();
+        auto deck2 = Deck();
+
         deck.insert(Card(Suit::NONE, Rank::JOKER_A), 13);
         deck.insert(Card(Suit::NONE, Rank::JOKER_B), 30);
 
         deck.triple_cut();
 
-        for(size_t i = 0; i < deck.size(); i++)
-            std::print("Deck[{}]: Suit: {}, Rank: {}\n", i, static_cast<int>(deck[i].SUIT), static_cast<int>(deck[i].RANK));
+        // The checks are ugly because of array math. Ugh.
+        size_t joker_1_pos = 23; // deck.size() - 30
+        size_t joker_2_pos = 40; // (deck.size() - 30) + (joker_a_pos - joker_b_pos)
 
-        auto deck2 = Deck();
-        deck2.insert(Card(Suit::NONE, Rank::JOKER_A), 13);
-        deck2.insert(Card(Suit::NONE, Rank::JOKER_B), 30);
+        //std::print("Loop 1: last part of deck")
+        for(size_t i=0; i < 13; i++)
+            EXPECT_TRUE(deck[joker_2_pos + 1 + i] == deck2[i]);
+            
+        //std::print("Loop 2: middle part of deck")
+        for (size_t i = 0; i < 16; i++)
+            EXPECT_TRUE(deck[joker_1_pos + 1 + i] == deck2[13 + i]);
 
+        //std::print("Loop 3: first part of deck")
+        for(size_t i=0; i < joker_1_pos; i++)
+            EXPECT_TRUE(deck[i] == deck2[30 - 1 + i]);
 
+        EXPECT_TRUE(deck[23] == Card(Suit::NONE, Rank::JOKER_A));
+        EXPECT_TRUE(deck[40] == Card(Suit::NONE, Rank::JOKER_B));
+
+        // If you want to do it with iterators and automatic computation, it would look something like this:
         //auto joker_a = std::find(deck.deck.cbegin(), deck.deck.cend(), Card(Suit::NONE, Rank::JOKER_A));
         //auto joker_b = std::find(deck.deck.cbegin(), deck.deck.cend(), Card(Suit::NONE, Rank::JOKER_B));
-
-        size_t joker_a_pos = 23; // deck.size() - 30
-        size_t joker_b_pos = 40; // deck.size() - 30 + diff(joker_a_pos, joker_b_pos)
-
-        //for(size_t i=0; i < deck.size() - joker_b_pos; i++)
-        //    EXPECT_TRUE(deck[joker_b_pos + 1 + i] == deck2[i]);
-        //    
-        //for(size_t i=0; i < joker_b_pos - joker_a_pos; i++)
-        //    EXPECT_TRUE(deck[joker_a_pos + 1 + i] == deck2[i]);
-        
-        //for(size_t i=0; i < joker_a_pos; i++)
-        //    EXPECT_TRUE(deck[i] == deck2[joker_b_pos + i]);
 
         // auto tup = std::tuple(deck, Card(0));
         // the auto[iter, i] is how you declare a tuple in C++ and then do a destructuring bind on it.
@@ -258,15 +259,30 @@ TEST(deck, triple_cut)
 
         //for(auto[iter, i]=std::tuple(joker_b+1, 0); iter < deck.deck.cend(); iter++, i++)
         //    EXPECT_TRUE(*iter == deck2[i]);
-
-
-
-        EXPECT_TRUE(deck[23] == Card(Suit::NONE, Rank::JOKER_A));
-        EXPECT_TRUE(deck[40] == Card(Suit::NONE, Rank::JOKER_B));
     }
 
-
     // Edge case: both jokers next to each other in the middle, Joker A first
+    {
+        auto deck = Deck();
+        auto deck2 = Deck();
+
+        deck.insert(Card(Suit::NONE, Rank::JOKER_A), 26);
+        deck.insert(Card(Suit::NONE, Rank::JOKER_B), 27);
+
+        deck.triple_cut();
+
+        // The checks are ugly because of array math. Ugh.
+        //std::print("Loop 1: last part of deck")
+        for(size_t i=0; i < 26; i++)
+            EXPECT_TRUE(deck[28 + i] == deck2[i]);
+       
+        //std::print("Loop 2: first part of deck")
+        for(size_t i=0; i < 26; i++)
+            EXPECT_TRUE(deck[i] == deck2[26 + i]);
+
+        EXPECT_TRUE(deck[26] == Card(Suit::NONE, Rank::JOKER_A));
+        EXPECT_TRUE(deck[27] == Card(Suit::NONE, Rank::JOKER_B));
+    }
 
 }
 
