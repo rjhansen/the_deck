@@ -194,10 +194,10 @@ TEST(deck, triple_cut)
         deck.insert(Card(Suit::NONE, Rank::JOKER_A), 10);
         EXPECT_THROW(deck.triple_cut(), std::logic_error);
 
-        //deck.insert(Card(Suit::NONE, Rank::JOKER_A), 10);
-        //EXPECT_THROW(deck.triple_cut(), std::logic_error);
+        auto deck2 = Deck();
+        deck2.insert(Card(Suit::NONE, Rank::JOKER_B), 10);
+        EXPECT_THROW(deck.triple_cut(), std::logic_error);
     }
-
     // Edge case: jokers on top and bottom, Joker A first
     {
         auto deck = Deck();
