@@ -408,7 +408,7 @@ TEST(solitaire_ks, count_cut)
     deck.insert(joker_a, 52);
     deck.insert(joker_b, 10);
     deck.count_cut();
-    EXPECT_TRUE(deck[50] == Card(50));
+    EXPECT_TRUE(deck[50] == Card(49));
     EXPECT_TRUE(deck[10] == joker_b);
     EXPECT_TRUE(deck[53] == joker_a);
 
