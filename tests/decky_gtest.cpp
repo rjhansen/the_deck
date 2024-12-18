@@ -39,6 +39,13 @@ TEST(card, eq_incorrect)
     EXPECT_FALSE(Card(0) == Card(1));
 }
 
+TEST(card, card_as_int)
+{
+    EXPECT_EQ(Card(0).card_as_int() == 0);
+    EXPECT_EQ(Card(10).card_as_int() == 10);
+    EXPECT_EQ(Card(20).card_as_int() == 20);
+}
+
 // deck: container of cards
 // deck: initially sorted
 TEST(deck, default_create)
@@ -283,18 +290,137 @@ TEST(deck, triple_cut)
         EXPECT_TRUE(deck[26] == Card(Suit::NONE, Rank::JOKER_A));
         EXPECT_TRUE(deck[27] == Card(Suit::NONE, Rank::JOKER_B));
     }
-
 }
 
 // STRETCH GOAL: Implement Solitaire (crypto cipher)
 // solitaire_ks: triple cut: See tests for deck
 //               
 
+TEST(deck, bury_1_with_wraparound)
+{
+    auto deck = Deck();
+
+    deck.bury_1_with_wraparound(Card(0));
+    EXPECT_TRUE(deck[1] == Card(0));
+    EXPECT_TRUE(deck[0] == Card(1));
+
+    deck.bury_1_with_wraparound(Card(51));
+    EXPECT_TRUE(deck[0] == Card(51));
+    EXPECT_TRUE(deck[51] == Card(50));
+}
+
+TEST(deck, bury_with_wraparound)
+{
+    auto deck = Deck();
+
+    deck.bury_with_wraparound(Card(0), 3);
+    EXPECT_TRUE(deck[0] == Card(1));
+    EXPECT_TRUE(deck[1] == Card(2));
+    EXPECT_TRUE(deck[2] == Card(3));
+    EXPECT_TRUE(deck[3] == Card(0));
+
+
+    deck.bury_with_wraparound(Card(51), 2);
+    EXPECT_TRUE(deck[0] == Card(1));
+    EXPECT_TRUE(deck[1] == Card(51));
+    EXPECT_TRUE(deck[51] == Card(50));
+}
+
 // solitaire_ks: locate the A joker, and move it down by 1. If it's at the end of the deck, move it by 2 (so it's the second card)
+TEST(solitaire_ks, bury_joker_a_with_wrap)
+{
+    auto joker_a = Card(Suit::NONE, Rank::JOKER_A);
+
+    // Test normal bury
+    {
+        auto deck = Deck();
+        deck.insert(joker_a, 0);
+        deck.bury_joker_a();
+
+        EXPECT_TRUE(deck[0] == Card(0));
+        EXPECT_TRUE(deck[1] == joker_a);
+    }
+
+    // Test Wraparound bury
+    {
+        auto deck = Deck();
+        deck.insert(joker_a, 52);
+        deck.bury_joker_a();
+
+        EXPECT_TRUE(deck[52] == Card(51));
+        EXPECT_TRUE(deck[0] == Card(0));
+        EXPECT_TRUE(deck[1] == joker_a);
+    }
+}
+
 // solitaire_ks: locate the B joker and move it down by 2. If it's the second-to-last card, it becomes the 2nd card.
 //               If it's last, it becomes 3rd.
+TEST(solitaire_ks, bury_joker_b_with_wrap)
+{
+    auto joker_b = Card(Suit::NONE, Rank::JOKER_B);
+
+    // Test normal bury
+    {
+        auto deck = Deck();
+        deck.insert(joker_b, 0);
+        deck.bury_joker_b();
+
+        EXPECT_TRUE(deck[0] == Card(0));
+        EXPECT_TRUE(deck[1] == Card(1));
+        EXPECT_TRUE(deck[2] == joker_b);
+    }
+
+    // Test Wraparound bury (second-to-last card)
+    {
+        auto deck = Deck();
+        deck.insert(joker_b, 51);
+        deck.bury_joker_b();
+
+        EXPECT_TRUE(deck[52] == Card(51));
+        EXPECT_TRUE(deck[0] == Card(0));
+        EXPECT_TRUE(deck[1] == joker_b);
+    }
+
+    // Test Wraparound bury (last card)
+    {
+        auto deck = Deck();
+        deck.insert(joker_b, 52);
+        deck.bury_joker_b();
+
+        EXPECT_TRUE(deck[52] == Card(51));
+        EXPECT_TRUE(deck[0] == Card(0));
+        EXPECT_TRUE(deck[1] == Card(1));
+        EXPECT_TRUE(deck[2] == joker_b);
+    }
+}
+
 // solitaire_ks: count cut: look at the value of the bottom card, if it's either joker, then its value is 53.
 //               Remove that many cards from the top of the deck and insert them just above the last card in the deck.
+TEST(solitaire_ks, count_cut)
+{
+    auto deck = Deck();
+    deck.count_cut();
+    EXPECT_TRUE(deck[50] == Card(50));
+
+    auto joker_a = Card(Suit::NONE, Rank::JOKER_A);
+    auto joker_b = Card(Suit::NONE, Rank::JOKER_B);
+
+    deck.insert(joker_a, 52);
+    deck.insert(joker_b, 10);
+    deck.count_cut();
+    EXPECT_TRUE(deck[50] == Card(50));
+    EXPECT_TRUE(deck[10] == joker_b);
+    EXPECT_TRUE(deck[53] == joker_a);
+
+    deck.triple_cut();
+    deck.count_cut();
+    EXPECT_TRUE(deck[53] == 0);
+
+
+
+}
+
+
 // solitaire_ks: look at the value of the top card. Either joker is 53. Count this many places below that card and take the value
 //               of that card as the next value in the keystream. If the card counted to is either joker, ignore it and repeat the
 //               keystream algorithm.

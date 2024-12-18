@@ -80,6 +80,9 @@ struct Card
 
     bool operator <(const Card& other) const; // the const at the end tells the compiler that this will never change the state of the object
     bool operator ==(const Card& other) const;
+
+    int32_t card_as_int();
+
 };
 
 struct Deck
@@ -87,6 +90,8 @@ struct Deck
     private:
         std::random_device rd;
         std::mt19937 gen; // Mersenne Twister (1993) PRNG
+        static const Card JOKER_A(Suit::NONE, Rank::JOKER_A);
+        static const Card JOKER_B(Suit::NONE, Rank::JOKER_B);
 
     public:
         std::vector<Card> deck;
@@ -124,6 +129,11 @@ struct Deck
         Card deal(const size_t position);
         void insert(const Card& card, const size_t position);
         void triple_cut();
+        void count_cut();
+        void bury_1_with_wraparound(const Card& card);
+        void bury_with_wraparound(const Card& card, const size_t slots_down);
+        void bury_joker_a();
+        void bury_joker_b();
         void count_cut();
 
 

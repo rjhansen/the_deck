@@ -64,7 +64,7 @@
         std::vector<Card> after_second_joker(second_joker+1, deck.end());
 
         // Remove the parts outside the jokers from the deck
-        deck.erase(second_joker+1, deck.end());
+        deck.erase(second_joker+1, deck.end()); // Erase the second half first to avoid making the first iterator invalid
         deck.erase(deck.begin(), first_joker);
 
         // Append the middle portion after the original last portion, and then append the first portion to that
@@ -72,4 +72,60 @@
         std::copy(to_first_joker.cbegin(), to_first_joker.cend(), std::back_inserter(after_second_joker));
 
         deck = after_second_joker;
+    }
+
+    void Deck::bury_1_with_wraparound(const Card& card)
+    {
+        auto card_location = std::find(deck.begin(), deck.end(), card);
+
+        if(card_location == deck.end())
+            throw std::logic_error("Card not found");
+
+        // More terse, less legible
+        //std::swap(*card_location, card_location == deck.end()-1 ? *(deck.begin()) : *(card_location+1));
+
+        if(card_location == deck.end()-1)
+        {
+            auto last_card = *(deck.end()-1);
+            deck.pop_back();
+            deck.insert(deck.begin(), last_card);
+        }
+        else
+            std::swap(*card_location, *(card_location+1));
+    }
+
+    void Deck::bury_with_wraparound(const Card& card, const size_t slots_down)
+    {
+        for(size_t i=0; i<slots_down; i++)
+            bury_1_with_wraparound(card);
+    }
+
+    void Deck::bury_joker_a()
+    {
+        //down by 1 slot unless last card, then down by 2
+        auto joker_a_location = std::find(deck.begin(), deck.end(), JOKER_A);
+        
+        if(joker_a_location == (deck.end()-1))
+            bury_1_with_wraparound(joker_a);
+        bury_1_with_wraparound(joker_a);
+    }
+
+    void Deck::bury_joker_b()
+    {
+        //down by 1 slot unless last card, then down by 2
+        auto joker_b_location = std::find(deck.begin(), deck.end(), JOKER_B);
+        
+        if(joker_b_location == (deck.end()-2) || joker_b_location == (deck.end()-1))
+            bury_1_with_wraparound(joker_b);
+        bury_with_wraparound(joker_b, 2);
+    }
+
+    void Deck::count_cut()
+    {
+        const Card& last_card = *(deck.end()-1);
+        auto index = last_card.card_as_int() + 1; // The cards ALWAYS move by at least 1 position
+        std::vector<Card> temp_cards(deck.begin(), deck.begin() + index);
+
+        deck.erase(deck.begin(), deck.begin()+index);
+        deck.insert(deck.end()-1, temp_cards.begin(), temp_cards.end());
     }

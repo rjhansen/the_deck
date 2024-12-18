@@ -41,3 +41,12 @@ bool Card::operator ==(const Card& other) const
 
     return false;
 }
+
+
+int32_t Card::card_as_int()
+{
+    if(SUIT==NONE && (RANK==Rank::JOKER_A || RANK == Rank::JOKER_B))
+        return 52; // For the Solitaire algorithm
+
+    return static_cast<int32_t>(SUIT)*13 + static_cast<int32_t>(RANK);
+}
