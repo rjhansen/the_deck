@@ -230,12 +230,20 @@ TEST(deck, triple_cut)
 
         size_t joker_a_pos = 23; // deck.size() - 30
         size_t joker_b_pos = 40; // deck.size() - 30 + diff(joker_a_pos, joker_b_pos)
+
+        //for(size_t i=0; i < deck.size() - joker_b_pos; i++)
+        //    EXPECT_TRUE(deck[joker_b_pos + 1 + i] == deck2[i]);
+        //    
+        //for(size_t i=0; i < joker_b_pos - joker_a_pos; i++)
+        //    EXPECT_TRUE(deck[joker_a_pos + 1 + i] == deck2[i]);
         
+        //for(size_t i=0; i < joker_a_pos; i++)
+        //    EXPECT_TRUE(deck[i] == deck2[joker_b_pos + i]);
 
         // auto tup = std::tuple(deck, Card(0));
         // the auto[iter, i] is how you declare a tuple in C++ and then do a destructuring bind on it.
         // This allows you to access each tuple member individually, rather than having to do a std::get() on each member.
-        for(auto[iter, i]=std::tuple(deck.deck.cbegin(), std::distance(joker_b, deck.deck.cend())); iter < joker_a; iter++, i++)
+        for(auto[iter, i]=std::tuple(deck.deck.cbegin(), std::distance(joker_b, deck.deck.cend()-1)); iter < joker_a; iter++, i++)
             EXPECT_TRUE(*iter == deck2[i]);
         
         for(auto[iter, i]=std::tuple(joker_a+1, std::distance(deck.deck.cbegin(), joker_a)); iter < joker_b; iter++, i++)
