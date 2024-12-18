@@ -227,24 +227,27 @@ TEST(deck, triple_cut)
 
         auto joker_a = std::find(deck.deck.cbegin(), deck.deck.cend(), Card(Suit::NONE, Rank::JOKER_A));
         auto joker_b = std::find(deck.deck.cbegin(), deck.deck.cend(), Card(Suit::NONE, Rank::JOKER_B));
+
+        size_t joker_a_pos = 23; // deck.size() - 30
+        size_t joker_b_pos = 40; // deck.size() - 30 + diff(joker_a_pos, joker_b_pos)
         
 
         // auto tup = std::tuple(deck, Card(0));
         // the auto[iter, i] is how you declare a tuple in C++ and then do a destructuring bind on it.
         // This allows you to access each tuple member individually, rather than having to do a std::get() on each member.
-        //for(auto[iter, i]=std::tuple(deck.deck.cbegin(), std::distance(deck.deck.cend(), joker_b)); iter < joker_a; iter++, i++)
-        //    EXPECT_TRUE(*iter == deck2[i]);
+        for(auto[iter, i]=std::tuple(deck.deck.cbegin(), std::distance(joker_b, deck.deck.cend())); iter < joker_a; iter++, i++)
+            EXPECT_TRUE(*iter == deck2[i]);
         
-        //for(auto[iter, i]=std::tuple(joker_a+1, std::distance(joker_a, deck.deck.cbegin())); iter < joker_b; iter++, i++)
-        //    EXPECT_TRUE(*iter == deck2[i]);
+        for(auto[iter, i]=std::tuple(joker_a+1, std::distance(deck.deck.cbegin(), joker_a)); iter < joker_b; iter++, i++)
+            EXPECT_TRUE(*iter == deck2[i]);
 
-        //for(auto[iter, i]=std::tuple(joker_b+1, 0); iter < deck.deck.cend(); iter++, i++)
-        //    EXPECT_TRUE(*iter == deck2[i]);
+        for(auto[iter, i]=std::tuple(joker_b+1, 0); iter < deck.deck.cend(); iter++, i++)
+            EXPECT_TRUE(*iter == deck2[i]);
 
-        
 
-        EXPECT_TRUE(deck[13] == Card(Suit::NONE, Rank::JOKER_A));
-        EXPECT_TRUE(deck[30] == Card(Suit::NONE, Rank::JOKER_B));
+
+        EXPECT_TRUE(deck[23] == Card(Suit::NONE, Rank::JOKER_A));
+        EXPECT_TRUE(deck[40] == Card(Suit::NONE, Rank::JOKER_B));
     }
 
 
