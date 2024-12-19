@@ -31,12 +31,12 @@ TEST(card, eq_correct)
     EXPECT_TRUE(Card(0) == Card(0));
     EXPECT_TRUE(Card(Suit::NONE, Rank::JOKER_A) == Card(Suit::NONE, Rank::JOKER_A));
     EXPECT_TRUE(Card(Suit::NONE, Rank::JOKER_B) == Card(Suit::NONE, Rank::JOKER_B));
-    EXPECT_FALSE(Card(Suit::NONE, Rank::JOKER_A) == Card(Suit::NONE, Rank::JOKER_B));
-    EXPECT_FALSE(Card(Suit::NONE, Rank::JOKER_B) == Card(Suit::NONE, Rank::JOKER_A));
 }
 TEST(card, eq_incorrect)
 {
     EXPECT_FALSE(Card(0) == Card(1));
+    EXPECT_FALSE(Card(Suit::NONE, Rank::JOKER_A) == Card(Suit::NONE, Rank::JOKER_B));
+    EXPECT_FALSE(Card(Suit::NONE, Rank::JOKER_B) == Card(Suit::NONE, Rank::JOKER_A));
 }
 
 TEST(card, test_card_as_int)
