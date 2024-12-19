@@ -18,7 +18,7 @@ const Card& Deck::operator[](const size_t index) const
 bool Deck::operator==(const Deck& other) const
 {
     std::vector<Card> temp;
-    std::set_difference(deck.begin(), deck.end(), other.deck.begin(), other.deck.end(), temp);
+    std::set_difference(deck.cbegin(), deck.cend(), other.deck.cbegin(), other.deck.cend(), std::back_inserter(temp));
     return temp.empty();
 }
 
