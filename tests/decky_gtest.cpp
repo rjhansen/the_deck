@@ -531,6 +531,8 @@ TEST(solitaire_ks, crypt_encrypt)
 
     std::print("Encryption result: {}\n", result);
 
+    deck.dump();
+
     EXPECT_TRUE(result == expected_result);
     //EXPECT_TRUE(deck == Deck(1));
 }

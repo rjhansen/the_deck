@@ -1,9 +1,11 @@
 #include <algorithm>
 #include <cstdint>
 #include <exception>
+#include <iostream>
 #include <iterator>
 #include <numeric>
 #include <random>
+#include <print>
 #include <ranges>
 #include <span>
 #include <stdexcept>
@@ -87,6 +89,11 @@ struct Card {
 
     bool operator<(const Card& other) const; // the const at the end tells the compiler that this will never change the state of the object
     bool operator==(const Card& other) const;
+    std::ostream& operator<<(std::ostream& stream) const
+    {
+        stream << static_cast<int32_t>(SUIT) << " " << static_cast<int32_t>(RANK);
+        return stream;
+    }
 
     int32_t card_as_int() const;
 };
@@ -172,6 +179,30 @@ public:
     void bury_joker_b();
     void count_cut();
     uint32_t get_keystream_value();
+
+    //void dump() const { std::print("{}\n", deck);}
+
+    //void dump() const 
+    //{ 
+    //    size_t i = 0;
+    //    std::print("Deck: ")
+    //    for (const auto& card: deck)
+    //        std::print("{} S: {}, R: {} | ", i++, card.SUIT, card.RANK);
+    //    std::print("\n");
+    //}
+
+    //void dump() const 
+    //{ 
+    //    std::print("Deck: ")
+    //    for(size_t i; i<deck.size(), i++)
+    //        std::print("{} S: {}, R: {} | ", i, card.SUIT, card.RANK);
+    //    std::print("\n");
+    //}
+
+    void dump() const
+    {
+        std::copy(deck.cbegin(), deck.cend(), std::ostream_iterator<Card>(std::cout, " | "));
+    }
 
     // This function is a templatized function, which means it MUST be implemented entirely in the header file
     // This is because the preprocessor/compiler will need access to the full definition whenever it encounters it
