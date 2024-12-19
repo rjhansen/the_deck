@@ -21,6 +21,9 @@ uint8_t get_keystream_value(Deck& deck)
 
     if (ks_val > 26)
         ks_val -= 26;
+    
+    if (ks_val < 1 || ks_val > 26)
+        throw std::logic_error("Keystream generator created an invalid value");
 
     return ks_val;
 }
