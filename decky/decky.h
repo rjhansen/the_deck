@@ -93,7 +93,7 @@ struct Card {
     int32_t card_as_int() const;
 };
 
-std::ostream& operator<<(std::ostream& stream, const Card& card) const
+std::ostream& operator<<(std::ostream& stream, const Card& card)
 {
     // MAKE SURE TO PUT PARENS AROUND THE static_casts BECAUSE OTHERWISE C++ WILL TRY TO 
     // DO A BINARY SHIFT LEFT ON THE INTS
@@ -203,11 +203,10 @@ public:
     //    std::print("\n");
     //}
 
-    //void dump_numeric() const
-    //{
-    //    std::print("Deck: ");
-    //    for 
-    //}
+    void dump_numeric() const
+    {
+        std::print("Deck: ");
+    }
 
     void dump() const
     {
