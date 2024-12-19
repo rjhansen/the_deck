@@ -95,7 +95,10 @@ struct Card {
 
 std::ostream& operator<<(std::ostream& stream, const Card& card) const
 {
-    stream << static_cast<int32_t>(card.SUIT) << " " << static_cast<int32_t>(card.RANK);
+    // MAKE SURE TO PUT PARENS AROUND THE static_casts BECAUSE OTHERWISE C++ WILL TRY TO 
+    // DO A BINARY SHIFT LEFT ON THE INTS
+    // THE ERRORS MAKE THE DEAD RISE
+    stream << (static_cast<int32_t>(card.SUIT)) << " " << (static_cast<int32_t>(card.RANK));
     return stream;
 }
 
@@ -192,18 +195,24 @@ public:
     //    std::print("\n");
     //}
 
-    void dump() const 
-    { 
-        std::print("Deck: ");
-        for(size_t i; i<deck.size(); i++)
-            std::print("{} S: {}, R: {} | ", i, static_cast<int32_t>(deck[i].SUIT), static_cast<int32_t>(deck[i].RANK));
-        std::print("\n");
-    }
-
-    //void dump() const
-    //{
-    //    std::copy(deck.cbegin(), deck.cend(), std::ostream_iterator<Card>(std::cout, " | "));
+    //void dump() const 
+    //{ 
+    //    std::print("Deck: ");
+    //    for(size_t i=0; i<deck.size(); i++)
+    //        std::print("{} S: {}, R: {} | ", i, static_cast<int32_t>(deck[i].SUIT), static_cast<int32_t>(deck[i].RANK));
+    //    std::print("\n");
     //}
+
+    //void dump_numeric() const
+    //{
+    //    std::print("Deck: ");
+    //    for 
+    //}
+
+    void dump() const
+    {
+        std::copy(deck.cbegin(), deck.cend(), std::ostream_iterator<Card>(std::cout, " | "));
+    }
 
     // This function is a templatized function, which means it MUST be implemented entirely in the header file
     // This is because the preprocessor/compiler will need access to the full definition whenever it encounters it
