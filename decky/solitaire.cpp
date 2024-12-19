@@ -48,7 +48,7 @@ std::vector<uint8_t> convert_string_to_uint8(std::string input_string)
 
 int main(void)
 {
-    auto deck = Deck(true);
+    auto deck = Deck(1);
 
     for (int i = 0; i < 10; i++)
         std::print("{} ", get_keystream_value(deck));

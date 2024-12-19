@@ -66,14 +66,7 @@ TEST(deck, size)
 TEST(deck, copy_range)
 {
     Card cards[5] = {Card(0), Card(1), Card(2), Card(3), Card(4)};
-    auto deck = Deck(cards);
-
-    std::print("Deck: ");
-    for(size_t i=0; i<deck.size(); i++)
-    {
-        std::print("{} ", deck[i]);
-    }
-    std::print("\n");
+    auto deck = Deck(cards); // Ugh, C++. Evaluating the pointer to cards as a bool
 
     EXPECT_TRUE(deck.deck.size() == 5);
     EXPECT_TRUE(deck[0] == Card(0));
@@ -429,7 +422,7 @@ TEST(deck, count_cut)
 //               keystream algorithm.
 TEST(deck, get_keystream_value)
 {
-    auto deck = Deck(true);
+    auto deck = Deck(1);
 
     auto keystream_val = deck.get_keystream_value();
     EXPECT_TRUE(keystream_val == 2);

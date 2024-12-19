@@ -102,7 +102,12 @@ struct Deck
     public:
         std::vector<Card> deck;
         // Creates a deck of cards, in order
-        Deck(bool with_jokers=false): rd(), gen(rd())  // No curly brackets needed when calling a member's constructor directly
+        // The parameter is a uint8_t instead of a bool, because if we happen to pass an array
+        // to Deck() to call the copy constructor (that's the next one down), C++ will interpret
+        // the pointer as a bool to test for NULL, and as a result, will call this constructor
+        // with a value of "false" for a NULL pointer and "true" otherwise. So copy constructors
+        // break things.
+        Deck(uint8_t with_jokers=0): rd(), gen(rd())  // No curly brackets needed when calling a member's constructor directly
         {
             /*
             // C++ 23 way; not supported by compilers yet
