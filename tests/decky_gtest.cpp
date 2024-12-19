@@ -68,6 +68,13 @@ TEST(deck, copy_range)
     Card cards[5] = {Card(0), Card(1), Card(2), Card(3), Card(4)};
     auto deck = Deck(cards);
 
+    std::print("Deck: ");
+    for(size_t i=0; i<deck.size(); i++)
+    {
+        std::print("{} ", deck[i]);
+    }
+    std::print("\n");
+
     EXPECT_TRUE(deck.deck.size() == 5);
     EXPECT_TRUE(deck[0] == Card(0));
 }
@@ -326,8 +333,8 @@ TEST(deck, bury_with_wraparound)
     EXPECT_TRUE(deck[51] == Card(50));
 }
 
-// solitaire_ks: locate the A joker, and move it down by 1. If it's at the end of the deck, move it by 2 (so it's the second card)
-TEST(solitaire_ks, bury_joker_a_with_wrap)
+// deck: locate the A joker, and move it down by 1. If it's at the end of the deck, move it by 2 (so it's the second card)
+TEST(deck, bury_joker_a_with_wrap)
 {
     auto joker_a = Card(Suit::NONE, Rank::JOKER_A);
 
@@ -353,9 +360,9 @@ TEST(solitaire_ks, bury_joker_a_with_wrap)
     }
 }
 
-// solitaire_ks: locate the B joker and move it down by 2. If it's the second-to-last card, it becomes the 2nd card.
+// deck: locate the B joker and move it down by 2. If it's the second-to-last card, it becomes the 2nd card.
 //               If it's last, it becomes 3rd.
-TEST(solitaire_ks, bury_joker_b_with_wrap)
+TEST(deck, bury_joker_b_with_wrap)
 {
     auto joker_b = Card(Suit::NONE, Rank::JOKER_B);
 
@@ -394,9 +401,9 @@ TEST(solitaire_ks, bury_joker_b_with_wrap)
     }
 }
 
-// solitaire_ks: count cut: look at the value of the bottom card, if it's either joker, then its value is 53.
+// deck: count cut: look at the value of the bottom card, if it's either joker, then its value is 53.
 //               Remove that many cards from the top of the deck and insert them just above the last card in the deck.
-TEST(solitaire_ks, count_cut)
+TEST(deck, count_cut)
 {
     auto deck = Deck();
     deck.count_cut();
@@ -417,18 +424,20 @@ TEST(solitaire_ks, count_cut)
     EXPECT_TRUE(deck[53] == Card(9));
 }
 
-// solitaire_ks: look at the value of the top card. Either joker is 53. Count this many places below that card and take the value
+// deck: look at the value of the top card. Either joker is 53. Count this many places below that card and take the value
 //               of that card as the next value in the keystream. If the card counted to is either joker, ignore it and repeat the
 //               keystream algorithm.
-TEST(solitaire_ks, get_keystream_value)
+TEST(deck, get_keystream_value)
 {
-    auto deck = Deck();
-    auto joker_a = Card(Suit::NONE, Rank::JOKER_A);
-    auto joker_b = Card(Suit::NONE, Rank::JOKER_B);
-
-    deck.insert(joker_a, 52);
-    deck.insert(joker_b, 10);
+    auto deck = Deck(true);
 
     auto keystream_val = deck.get_keystream_value();
     EXPECT_TRUE(keystream_val == 2);
+}
+
+
+// solitaire_ks: take a test vector of data and create a keystream from an initialized deck
+TEST(solitaire_ks, generate_keystream)
+{
+    auto deck = Deck(true);
 }

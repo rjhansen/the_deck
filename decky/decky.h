@@ -22,7 +22,8 @@ enum class Suit
 
 enum class Rank
 {
-    TWO = 0,
+    ACE = 0,
+    TWO,
     THREE,
     FOUR,
     FIVE,
@@ -34,7 +35,6 @@ enum class Rank
     JACK,
     QUEEN,
     KING,
-    ACE,
     JOKER_A,
     JOKER_B
 };
@@ -102,7 +102,7 @@ struct Deck
     public:
         std::vector<Card> deck;
         // Creates a deck of cards, in order
-        Deck(): rd(), gen(rd())  // No curly brackets needed when calling a member's constructor directly
+        Deck(bool with_jokers=false): rd(), gen(rd())  // No curly brackets needed when calling a member's constructor directly
         {
             /*
             // C++ 23 way; not supported by compilers yet
@@ -115,6 +115,11 @@ struct Deck
             std::vector<int> zero_to_51(52);
             std::iota(zero_to_51.begin(), zero_to_51.end(), 0);
             std::transform(zero_to_51.begin(), zero_to_51.end(), std::back_inserter(deck), [](const int x) {return Card(x);}); // lambda function to turn int to Card
+            if(with_jokers)
+            {
+                deck.push_back(Card(Suit::NONE, Rank::JOKER_A));
+                deck.push_back(Card(Suit::NONE, Rank::JOKER_B));
+            }
         }
 
         // C++ 20 way; slightly more wordy
