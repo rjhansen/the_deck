@@ -1,5 +1,6 @@
 #include <print>
 #include <gtest/gtest.h>
+#include <array>
 #include "decky.h"
 
 
@@ -507,8 +508,32 @@ TEST(solitaire_ks, keystream_generation)
 
     for(const auto& x: test_vector)
     {
-        ks_val = get_keystream_value(deck);
-        std::print("expected: {}, got: {}\n", x, ks_val);
+        ks_val = get_raw_keystream_value(deck);
         EXPECT_TRUE(x == ks_val);
     }
+}
+
+// solitaire_ks: test conversion of characters to numbers
+TEST(solitaire_ks, convert_string_to_numbers)
+{
+    const char *input_string = "Do not use PC!";
+    const std::array<uint8_t, 10> correct_result = {4, 15, 14, 15, 20, 21, 19, 5, 16, 3};
+
+    auto result = convert_string_to_uint8(input_string);
+
+    for(size_t i=0; i < result.size(); i++)
+        EXPECT_TRUE(result[i] == correct_result[i]);
+}
+
+// solitaire_ks: test conversion of numbers to chars
+TEST(solitaire_ks, convert_numbers_to_string)
+{
+    // The latest and greatest initialization style: curly braces
+    const std::vector<uint8_t> input_vector{4, 15, 14, 15, 20, 21, 19, 5, 16, 3};
+    const std::string correct_result{"DONOTUSEPC"};
+
+    auto result = convert_uint8_to_string(input_vector);
+
+    for(size_t i=0; i < result.size(); i++)
+        EXPECT_TRUE(result[i] == correct_result[i]);
 }
