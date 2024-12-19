@@ -4,7 +4,7 @@ uint32_t get_keystream_value(Deck& deck)
 {
     uint32_t ks_val = 53;
 
-    while(ks_val == 53)
+    while(ks_val == 53 || ks_val == 54)
     {
         deck.bury_joker_a();
         deck.bury_joker_b();
