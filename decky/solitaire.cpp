@@ -78,7 +78,14 @@ std::string crypt(const std::string& input, Deck deck, const Opmode mode)
     auto numbers = convert_string_to_uint8(input);
     // Lambda notation for "inherit enclosing scope by reference".
     // If we start the lambda with [=], it would pass enclosing scope by value, so it would have its own copy
-    auto Pred = mode==Opmode::ENCRYPT?
+    auto Pred = [&](uint8_t c) {
+        if (mode == Opmode::ENCRYPT) {
+
+        }
+        else {
+            
+        }
+    }
         [&](uint8_t c){ uint8_t v = c + get_keystream_value(deck); if(v > 26) v-=26; return v;} :
         [&](uint8_t c){ int8_t v = static_cast<int8_t>(c) - static_cast<int8_t>(get_keystream_value(deck)); if (v < 0) v+=26; return static_cast<uint8_t>(v);};
 

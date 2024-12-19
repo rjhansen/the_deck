@@ -142,7 +142,11 @@ public:
         , gen(rd())
     {
         deck.clear();
+    #ifdef __APPLE__
+        std::copy(other_deck.begin(), other_deck.end(), std::back_inserter(deck));
+    #else
         std::copy(other_deck.cbegin(), other_deck.cend(), std::back_inserter(deck));
+    #endif
     }
 
     Card& operator[](const size_t index);
