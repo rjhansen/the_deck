@@ -89,14 +89,15 @@ struct Card {
 
     bool operator<(const Card& other) const; // the const at the end tells the compiler that this will never change the state of the object
     bool operator==(const Card& other) const;
-    std::ostream& operator<<(std::ostream& stream) const
-    {
-        stream << static_cast<int32_t>(SUIT) << " " << static_cast<int32_t>(RANK);
-        return stream;
-    }
 
     int32_t card_as_int() const;
 };
+
+std::ostream& operator<<(std::ostream& stream, const Card& card) const
+{
+    stream << static_cast<int32_t>(card.SUIT) << " " << static_cast<int32_t>(card.RANK);
+    return stream;
+}
 
 struct Deck {
 private:
@@ -191,18 +192,18 @@ public:
     //    std::print("\n");
     //}
 
-    //void dump() const 
-    //{ 
-    //    std::print("Deck: ")
-    //    for(size_t i; i<deck.size(), i++)
-    //        std::print("{} S: {}, R: {} | ", i, card.SUIT, card.RANK);
-    //    std::print("\n");
-    //}
-
-    void dump() const
-    {
-        std::copy(deck.cbegin(), deck.cend(), std::ostream_iterator<Card>(std::cout, " | "));
+    void dump() const 
+    { 
+        std::print("Deck: ");
+        for(size_t i; i<deck.size(); i++)
+            std::print("{} S: {}, R: {} | ", i, static_cast<int32_t>(deck[i].SUIT), static_cast<int32_t>(deck[i].RANK));
+        std::print("\n");
     }
+
+    //void dump() const
+    //{
+    //    std::copy(deck.cbegin(), deck.cend(), std::ostream_iterator<Card>(std::cout, " | "));
+    //}
 
     // This function is a templatized function, which means it MUST be implemented entirely in the header file
     // This is because the preprocessor/compiler will need access to the full definition whenever it encounters it
