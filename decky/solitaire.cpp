@@ -1,4 +1,3 @@
-#include <print>
 #include "decky.h"
 
 uint32_t get_keystream_value(Deck& deck)
@@ -43,14 +42,4 @@ std::vector<uint8_t> convert_string_to_uint8(std::string input_string)
     std::transform(input_string.cbegin(), input_string.cend(), std::back_inserter(output), [](const auto& x){return (static_cast<uint8_t>(x-'A')+1);});
 
     return output;
-}
-
-
-int main(void)
-{
-    auto deck = Deck(1);
-
-    for (int i = 0; i < 10; i++)
-        std::print("{} ", get_keystream_value(deck));
-    std::print("\n");
 }

@@ -469,7 +469,12 @@ TEST(solitaire_ks, keystream_generation)
 {
     uint8_t test_vector[10] = {4, 49, 10, 24, 8, 51, 44, 6, 4, 33}; // this assumes the algorithm skips a 53 at step 4
     auto deck = Deck(1); // deck with jokers
+    uint8_t ks_val = 0;
 
     for(const auto& x: test_vector)
-        EXPECT_TRUE(x == get_keystream_value(deck));
+    {
+        ks_val = get_keystream_value(deck);
+        std::print("expected: {}, got: {}\n", x, ks_val);
+        EXPECT_TRUE(x == ks_val);
+    }
 }
