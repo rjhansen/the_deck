@@ -44,6 +44,8 @@ TEST(card, test_card_as_int)
     EXPECT_TRUE(Card(0).card_as_int() == 0);
     EXPECT_TRUE(Card(10).card_as_int() == 10);
     EXPECT_TRUE(Card(20).card_as_int() == 20);
+    EXPECT_TRUE(Card(Suit::NONE, Rank::JOKER_A).card_as_int() == 52);
+    EXPECT_TRUE(Card(Suit::NONE, Rank::JOKER_B).card_as_int() == 52);
 }
 
 // deck: container of cards
@@ -181,14 +183,24 @@ TEST(deck, arbitrary_cards)
 // deck: insert card into arbitrary position (top, middle, bottom)
 TEST(deck, insert_arbitrary)
 {
-    auto deck = Deck();
     Card joker = Card(Suit::NONE, Rank::JOKER_A);
+    {
+        auto deck = Deck();
+        deck.insert(joker, 51);
+        EXPECT_TRUE(deck[51] == joker);
+    }
 
-    deck.insert(joker, 52);
-    EXPECT_TRUE(deck[52] == joker);
+    {
+        auto deck = Deck();
+        deck.insert(joker, 52);
+        EXPECT_TRUE(deck[52] == joker);
+    }
 
-    deck.insert(joker, 100);
-    EXPECT_TRUE(deck[53] == joker);
+    {
+        auto deck = Deck();
+        deck.insert(joker, 100);
+        EXPECT_TRUE(deck[52] == joker);
+    }
     //std::print("Joker: Suit: {}, Rank: {}\n", static_cast<int>(joker.SUIT), static_cast<int>(joker.RANK));
     //std::print("Deck[52]: Suit: {}, Rank: {}\n", static_cast<int>(deck[52].SUIT), static_cast<int>(deck[52].RANK));
 
@@ -304,32 +316,54 @@ TEST(deck, triple_cut)
 
 TEST(deck, bury_1_with_wraparound)
 {
-    auto deck = Deck();
+    {
+        auto deck = Deck();
 
-    deck.bury_1_with_wraparound(Card(0));
-    EXPECT_TRUE(deck[1] == Card(0));
-    EXPECT_TRUE(deck[0] == Card(1));
+        deck.bury_1_with_wraparound(Card(0));
+        EXPECT_TRUE(deck[1] == Card(0));
+        EXPECT_TRUE(deck[0] == Card(1));
+    }
 
-    deck.bury_1_with_wraparound(Card(51));
-    EXPECT_TRUE(deck[0] == Card(51));
-    EXPECT_TRUE(deck[51] == Card(50));
+    {
+        auto deck = Deck();
+
+        deck.bury_1_with_wraparound(Card(51));
+        EXPECT_TRUE(deck[0] == Card(0));
+        EXPECT_TRUE(deck[1] == Card(51));
+        EXPECT_TRUE(deck[51] == Card(50));
+    }
+
+    {
+        auto deck = Deck();
+
+        deck.bury_1_with_wraparound(Card(50));
+        EXPECT_TRUE(deck[0] == Card(0));
+        EXPECT_TRUE(deck[50] == Card(51));
+        EXPECT_TRUE(deck[51] == Card(50));
+    }
 }
 
 TEST(deck, bury_with_wraparound)
 {
-    auto deck = Deck();
+    {
+        auto deck = Deck();
 
-    deck.bury_with_wraparound(Card(0), 3);
-    EXPECT_TRUE(deck[0] == Card(1));
-    EXPECT_TRUE(deck[1] == Card(2));
-    EXPECT_TRUE(deck[2] == Card(3));
-    EXPECT_TRUE(deck[3] == Card(0));
+        deck.bury_with_wraparound(Card(0), 3);
+        EXPECT_TRUE(deck[0] == Card(1));
+        EXPECT_TRUE(deck[1] == Card(2));
+        EXPECT_TRUE(deck[2] == Card(3));
+        EXPECT_TRUE(deck[3] == Card(0));
+    }
 
+    {
+        auto deck = Deck();
 
-    deck.bury_with_wraparound(Card(51), 2);
-    EXPECT_TRUE(deck[0] == Card(1));
-    EXPECT_TRUE(deck[1] == Card(51));
-    EXPECT_TRUE(deck[51] == Card(50));
+        deck.bury_with_wraparound(Card(51), 2);
+        EXPECT_TRUE(deck[0] == Card(0));
+        EXPECT_TRUE(deck[1] == Card(1));
+        EXPECT_TRUE(deck[2] == Card(51));
+        EXPECT_TRUE(deck[51] == Card(50));
+    }
 }
 
 // deck: locate the A joker, and move it down by 1. If it's at the end of the deck, move it by 2 (so it's the second card)

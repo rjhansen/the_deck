@@ -76,6 +76,8 @@ void Deck::triple_cut()
     deck = after_second_joker;
 }
 
+// Assumes deck is a circular buffer and moves card down one position in every case.
+// If card is last card in the deck, then the 
 void Deck::bury_1_with_wraparound(const Card& card)
 {
     auto card_location = std::find(deck.begin(), deck.end(), card);
@@ -91,9 +93,9 @@ void Deck::bury_1_with_wraparound(const Card& card)
         auto last_card = *(deck.end()-1);
         deck.pop_back();
         deck.insert(deck.begin(), last_card);
+        card_location = deck.begin();
     }
-    else
-        std::swap(*card_location, *(card_location+1));
+    std::swap(*card_location, *(card_location+1));
 }
 
 void Deck::bury_with_wraparound(const Card& card, const size_t slots_down)
@@ -108,8 +110,6 @@ void Deck::bury_joker_a()
     auto joker_a_location = std::find(deck.begin(), deck.end(), JOKER_A);
     auto joker_a = Card(Suit::NONE, Rank::JOKER_A);
     
-    if(joker_a_location == (deck.end()-1))
-        bury_1_with_wraparound(joker_a);
     bury_1_with_wraparound(joker_a);
 }
 
@@ -119,8 +119,6 @@ void Deck::bury_joker_b()
     auto joker_b_location = std::find(deck.begin(), deck.end(), JOKER_B);
     auto joker_b = Card(Suit::NONE, Rank::JOKER_B);
     
-    if(joker_b_location == (deck.end()-2) || joker_b_location == (deck.end()-1))
-        bury_1_with_wraparound(joker_b);
     bury_with_wraparound(joker_b, 2);
 }
 
