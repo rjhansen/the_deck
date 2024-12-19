@@ -16,13 +16,13 @@ TEST(card, lt_correct)
     EXPECT_TRUE(Card(0) < Card(1));
     EXPECT_TRUE(Card(Suit::NONE, Rank::JOKER_A) < Card(0));
     EXPECT_TRUE(Card(Suit::NONE, Rank::JOKER_B) < Card(0));
+    EXPECT_TRUE(Card(Suit::NONE, Rank::JOKER_A) < Card(Suit::NONE, Rank::JOKER_B));
 }
 TEST(card, lt_incorrect)
 {
     EXPECT_FALSE(Card(0) < Card(0));
     EXPECT_FALSE(Card(1) < Card(0));
     EXPECT_FALSE(Card(Suit::NONE, Rank::JOKER_A) < Card(Suit::NONE, Rank::JOKER_A));
-    EXPECT_FALSE(Card(Suit::NONE, Rank::JOKER_A) < Card(Suit::NONE, Rank::JOKER_B));
     EXPECT_FALSE(Card(Suit::NONE, Rank::JOKER_B) < Card(Suit::NONE, Rank::JOKER_A));
     EXPECT_FALSE(Card(Suit::NONE, Rank::JOKER_B) < Card(Suit::NONE, Rank::JOKER_B));
 }
@@ -30,9 +30,9 @@ TEST(card, eq_correct)
 {
     EXPECT_TRUE(Card(0) == Card(0));
     EXPECT_TRUE(Card(Suit::NONE, Rank::JOKER_A) == Card(Suit::NONE, Rank::JOKER_A));
-    EXPECT_TRUE(Card(Suit::NONE, Rank::JOKER_A) == Card(Suit::NONE, Rank::JOKER_B));
-    EXPECT_TRUE(Card(Suit::NONE, Rank::JOKER_B) == Card(Suit::NONE, Rank::JOKER_A));
     EXPECT_TRUE(Card(Suit::NONE, Rank::JOKER_B) == Card(Suit::NONE, Rank::JOKER_B));
+    EXPECT_FALSE(Card(Suit::NONE, Rank::JOKER_A) == Card(Suit::NONE, Rank::JOKER_B));
+    EXPECT_FALSE(Card(Suit::NONE, Rank::JOKER_B) == Card(Suit::NONE, Rank::JOKER_A));
 }
 TEST(card, eq_incorrect)
 {
@@ -58,8 +58,14 @@ TEST(deck, default_create)
 // deck: size
 TEST(deck, size)
 {
-    auto deck = Deck();
-    EXPECT_TRUE(deck.size() == 52);
+    {
+        auto deck = Deck();
+        EXPECT_TRUE(deck.size() == 52);
+    }
+    {
+        auto deck = Deck(1);
+        EXPECT_TRUE(deck.size() == 54);
+    }
 }
 
 // deck: copy from one range of cards to a deck
@@ -429,8 +435,41 @@ TEST(deck, get_keystream_value)
 }
 
 
-// solitaire_ks: take a test vector of data and create a keystream from an initialized deck
-TEST(solitaire_ks, generate_keystream)
+// solitaire_ks: test that the deck state is as expected after one run through the keystream generation steps
+TEST(solitaire_ks, deck_state)
 {
-    auto deck = Deck(true);
+    auto deck = Deck(1);
+    auto joker_a = Card(Suit::NONE, Rank::JOKER_A);
+    auto joker_b = Card(Suit::NONE, Rank::JOKER_B);
+
+    EXPECT_TRUE(deck[52] == joker_a);
+    EXPECT_TRUE(deck[53] == joker_b);
+
+    // Run through each step of the Solitaire keystream algorithm and verify deck state at each step
+    deck.bury_joker_a();
+    EXPECT_TRUE(deck[53] == joker_a);
+
+    deck.bury_joker_b();
+    EXPECT_TRUE(deck[1] == joker_b);
+
+    deck.triple_cut();
+    EXPECT_TRUE(deck[0] == joker_b);
+    EXPECT_TRUE(deck[52] == joker_a);
+    EXPECT_TRUE(deck[53] == Card(0));
+
+    deck.count_cut();
+    EXPECT_TRUE(deck[0] == Card(1));
+    EXPECT_TRUE(deck[51] == joker_a);
+    EXPECT_TRUE(deck[52] == joker_b);
+    EXPECT_TRUE(deck[53] == Card(0));
+}
+
+// solitaire_ks: compare generated keystream to a test vector
+TEST(solitaire_ks, keystream_generation)
+{
+    uint8_t test_vector[10] = {4, 49, 10, 24, 8, 51, 44, 6, 4, 33}; // this assumes the algorithm skips a 53 at step 4
+    auto deck = Deck(1); // deck with jokers
+
+    for(const auto& x: test_vector)
+        EXPECT_TRUE(x == get_keystream_value(deck));
 }

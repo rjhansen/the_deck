@@ -86,7 +86,7 @@ void Deck::bury_1_with_wraparound(const Card& card)
     // More terse, less legible
     //std::swap(*card_location, card_location == deck.end()-1 ? *(deck.begin()) : *(card_location+1));
 
-    if(card_location == deck.end()-1)
+    if(card_location == (deck.end()-1))
     {
         auto last_card = *(deck.end()-1);
         deck.pop_back();

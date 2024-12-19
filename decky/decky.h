@@ -170,4 +170,5 @@ struct Deck
 };
 
 
-
+uint32_t get_keystream_value(Deck& deck);
+std::vector<uint8_t> convert_string_to_uint8(std::string input_string);

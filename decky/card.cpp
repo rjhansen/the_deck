@@ -3,16 +3,18 @@
 // Card method definitions
 bool Card::operator <(const Card& other) const // the const at the end tells the compiler that this will never change the state of the object
 {
-    // Other card is a joker, so we are not less than it
+    // Joker A == Joker A
     if((RANK == Rank::JOKER_A && other.RANK == Rank::JOKER_A) ||
-       (RANK == Rank::JOKER_A && other.RANK == Rank::JOKER_B) ||
-       (RANK == Rank::JOKER_B && other.RANK == Rank::JOKER_A) ||
        (RANK == Rank::JOKER_B && other.RANK == Rank::JOKER_B))
         return false;
     
-    // We are a joker, so we are less than anything except a joker
-    // But that other case was just covered above
-    if(RANK == Rank::JOKER_A || RANK == Rank::JOKER_B)
+    // Joker A is less than everything else
+    if(RANK == Rank::JOKER_A && other.RANK != Rank::JOKER_A)
+        return true;
+
+    // Joker B is less than everything except Joker A
+    // We've already tested for self-equality above
+    if(RANK == Rank::JOKER_B && other.RANK != Rank::JOKER_A)
         return true;
 
     // All other cases
@@ -30,12 +32,6 @@ bool Card::operator <(const Card& other) const // the const at the end tells the
 
 bool Card::operator ==(const Card& other) const
 {
-    if((RANK == Rank::JOKER_A && other.RANK == Rank::JOKER_A) ||
-       (RANK == Rank::JOKER_A && other.RANK == Rank::JOKER_B) ||
-       (RANK == Rank::JOKER_B && other.RANK == Rank::JOKER_A) ||
-       (RANK == Rank::JOKER_B && other.RANK == Rank::JOKER_B))
-       return true;
-
     if(other.SUIT == SUIT && other.RANK == RANK)
         return true;
 
