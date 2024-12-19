@@ -1,5 +1,5 @@
-#include <print>
 #include "decky.h"
+#include <print>
 
 int main(void)
 {
