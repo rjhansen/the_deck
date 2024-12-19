@@ -15,6 +15,13 @@ const Card& Deck::operator[](const size_t index) const
     return deck.at(index);
 }
 
+const bool Deck::operator==(const Deck& other) const
+{
+    std::vector<Card> temp;
+    set::difference(deck.begin(), deck.end(), other.deck.begin(), other.deck.end(), temp);
+    return temp.empty();
+}
+
 void Deck::shuffle()
 {
     std::shuffle(deck.begin(), deck.end(), gen);

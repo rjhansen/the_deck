@@ -520,3 +520,35 @@ TEST(solitaire_ks, convert_numbers_to_string)
     for (size_t i = 0; i < result.size(); i++)
         EXPECT_TRUE(result[i] == correct_result[i]);
 }
+
+// solitaire_ks: test crypt
+TEST(solitaire_ks, crypt_encrypt)
+{
+    std::string input_string {"Do not use PC!"}; // input_string = "Do not use PC!"; would also work
+    std::string expected_result {"OSKJJJGTMW"};
+    auto deck = Deck(1);
+    std::string result = crypt(input_string, deck, Opmode::ENCRYPT);
+
+    EXPECT_TRUE(result == expected_result);
+    EXPECT_TRUE(deck == Deck(1));
+}
+TEST(solitaire_ks, crypt_decrypt)
+{
+    auto deck = Deck(1);
+
+}
+
+// solitaire_ks: test encrypt
+TEST(solitaire_ks, encrypt)
+{
+    std::string input_string {"Do not use PC!"};
+    std::string expected_result {"OSKJJJGTMW"};
+    auto deck = Deck(1);
+
+}
+// solitaire_ks: test decrypt
+TEST(solitaire_ks, decrypt)
+{
+    auto deck = Deck(1);
+
+}

@@ -133,6 +133,14 @@ public:
         }
     }
 
+    // Copy constructor. Feels like cheating.
+    Deck(const Deck& other)
+        : rd()
+        , gen(rd())
+        , deck(other.deck)
+    {
+    }
+
     // C++ 20 way; slightly more wordy
     // MAGIC LIES HERE:
     // std::span will MAGICALLY figure out the size of the input data, even with standard C arrays that don't know their own size.
@@ -151,6 +159,7 @@ public:
 
     Card& operator[](const size_t index);
     const Card& operator[](const size_t index) const;
+    bool operator==(const Deck& other) const;
 
     void shuffle();
     void sort();
@@ -183,4 +192,7 @@ uint8_t get_raw_keystream_value(Deck& deck);
 uint8_t get_keystream_value(Deck& deck);
 std::vector<uint8_t> convert_string_to_uint8(std::string input_string);
 std::string convert_uint8_to_string(const std::vector<uint8_t>& input_numbers);
+
 std::string crypt(const std::string& input, Deck deck, Opmode mode);
+std::string encrypt(const std::string& plaintext, const Deck& deck);
+std::string decrypt(const std::string& ciphertext, const Deck& deck);

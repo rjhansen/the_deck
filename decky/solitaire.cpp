@@ -72,6 +72,8 @@ std::string convert_uint8_to_string(const std::vector<uint8_t>& input_numbers)
 
 std::string crypt(const std::string& input, Deck deck, const Opmode mode)
 {
+    // We pass 'deck' by value so that our manipulations don't mess up the state of the caller's deck.
+
     // Lambda notation for "no access to enclosing scope"
     //auto Pred = mode==Opmode::ENCRYPT?
     //    [](uint8_t c, uint8_t k){ uint8_t v = c + k; if(v > 26) v-=26; return v;} :
@@ -100,4 +102,14 @@ std::string crypt(const std::string& input, Deck deck, const Opmode mode)
     std::transform(numbers.cbegin(), numbers.cend(), std::back_inserter(output), Pred);
     
     return convert_uint8_to_string(output);
+}
+
+std::string encrypt(const std::string& plaintext, const Deck& deck)
+{
+    return crypt(plaintext, deck, Opmode::ENCRYPT);
+}
+
+std::string decrypt(const std::string& ciphertext, const Deck& deck)
+{
+    return crypt(ciphertext, deck, Opmode::DECRYPT);
 }
