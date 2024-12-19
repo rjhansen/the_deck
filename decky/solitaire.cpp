@@ -69,5 +69,8 @@ std::string convert_uint8_to_string(const std::vector<uint8_t>& input_numbers)
     return output;
 }
 
-std::string crypt(const std::string& plaintext, bool encrypt)
-{}
+std::string crypt(const std::string& plaintext, Opmode mode)
+{
+    // Convert string to numbers
+
+}
