@@ -175,7 +175,8 @@ public:
     size_t size() const { return deck.size(); }
 };
 
-uint32_t get_raw_keystream_value(Deck& deck);
-uint32_t get_keystream_value(Deck& deck);
+uint8_t get_raw_keystream_value(Deck& deck);
+uint8_t get_keystream_value(Deck& deck);
 std::vector<uint8_t> convert_string_to_uint8(std::string input_string);
 std::string convert_uint8_to_string(const std::vector<uint8_t>& input_numbers);
+std::string crypt(const std::string& input, Deck deck, Opmode mode);

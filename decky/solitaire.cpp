@@ -1,10 +1,10 @@
 #include "decky.h"
 
-uint32_t get_raw_keystream_value(Deck& deck)
+uint8_t get_raw_keystream_value(Deck& deck)
 {
-    uint32_t ks_val = 53;
+    uint8_t ks_val = 53;
 
-    while (ks_val == 53 || ks_val == 54) {
+    while (ks_val == 53) {
         deck.bury_joker_a();
         deck.bury_joker_b();
         deck.triple_cut();
@@ -15,9 +15,9 @@ uint32_t get_raw_keystream_value(Deck& deck)
     return ks_val;
 }
 
-uint32_t get_keystream_value(Deck& deck)
+uint8_t get_keystream_value(Deck& deck)
 {
-    uint32_t ks_val = get_raw_keystream_value(deck);
+    uint8_t ks_val = get_raw_keystream_value(deck);
 
     if (ks_val > 26)
         ks_val -= 26;
@@ -67,8 +67,22 @@ std::string convert_uint8_to_string(const std::vector<uint8_t>& input_numbers)
     return output;
 }
 
-std::string crypt(const std::string& plaintext, Opmode mode)
+std::string crypt(const std::string& input, Deck deck, const Opmode mode)
 {
-    // Convert string to numbers
+    // Lambda notation for "no access to enclosing scope"
+    //auto Pred = mode==Opmode::ENCRYPT?
+    //    [](uint8_t c, uint8_t k){ uint8_t v = c + k; if(v > 26) v-=26; return v;} :
+    //    [](uint8_t c, uint8_t k){ int8_t v = static_cast<int8_t>(c) - static_cast<int8_t>(k); if (v < 0) v+=26; return static_cast<uint8_t>(v);};
 
+    std::vector<uint8_t> output;
+    auto numbers = convert_string_to_uint8(input);
+    // Lambda notation for "inherit enclosing scope by reference".
+    // If we start the lambda with [=], it would pass enclosing scope by value, so it would have its own copy
+    auto Pred = mode==Opmode::ENCRYPT?
+        [&](uint8_t c){ uint8_t v = c + get_keystream_value(deck); if(v > 26) v-=26; return v;} :
+        [&](uint8_t c){ int8_t v = static_cast<int8_t>(c) - static_cast<int8_t>(get_keystream_value(deck)); if (v < 0) v+=26; return static_cast<uint8_t>(v);};
+
+    std::transform(numbers.cbegin(), numbers.cend(), std::back_inserter(output), Pred);
+    
+    return convert_uint8_to_string(output);
 }
