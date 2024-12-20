@@ -1,4 +1,6 @@
 #include <stdexcept>
+#include <ranges>
+#include <tuple>
 
 #include "decky.h"
 
@@ -17,9 +19,15 @@ const Card& Deck::operator[](const size_t index) const
 
 bool Deck::operator==(const Deck& other) const
 {
-    std::vector<Card> temp;
-    std::set_difference(deck.cbegin(), deck.cend(), other.deck.cbegin(), other.deck.cend(), std::back_inserter(temp));
-    return temp.empty();
+    for (std::tuple<const Card&, const Card&> item : std::views::zip(deck, other.deck))
+        if(std::get<0>(item) != std::get<1>(item))
+            return false;
+    return true;
+
+    //std::vector<Card> temp;
+    // Requires the input ranges to be sorted, so not useful here since decks can be out of order
+    //std::set_difference(deck.cbegin(), deck.cend(), other.deck.cbegin(), other.deck.cend(), std::back_inserter(temp));
+    //return temp.empty();
 }
 
 void Deck::shuffle()
@@ -142,4 +150,13 @@ uint32_t Deck::get_keystream_value()
 {
     auto index = deck.begin()->card_as_int() + 1; // Solitaire's value of a card is 1 more than ours, so count an extra card down
     return static_cast<uint32_t>(deck.at(index).card_as_int()) + 1; // return solitaire's value rather than ours
+}
+
+std::ostream& operator<<(std::ostream& stream, const Card& card)
+{
+    // MAKE SURE TO PUT PARENS AROUND THE static_casts BECAUSE OTHERWISE C++ WILL TRY TO 
+    // DO A BINARY SHIFT LEFT ON THE INTS
+    // THE ERRORS MAKE THE DEAD RISE
+    stream << (static_cast<int32_t>(card.SUIT)) << " " << (static_cast<int32_t>(card.RANK));
+    return stream;
 }

@@ -529,17 +529,19 @@ TEST(solitaire_ks, crypt_encrypt)
     auto deck = Deck(1);
     std::string result = crypt(input_string, deck, Opmode::ENCRYPT);
 
-    std::print("Encryption result: {}\n", result);
-
-    deck.dump();
-
     EXPECT_TRUE(result == expected_result);
-    //EXPECT_TRUE(deck == Deck(1));
+    EXPECT_TRUE(deck == Deck(1));
 }
 TEST(solitaire_ks, crypt_decrypt)
 {
-    auto deck = Deck(1);
+    std::string input_string {"EXKY IZS GEH!"};
+    std::string expected_result {"AAAAAAAAAA"};
 
+    auto deck = Deck(1);
+    std::string result = crypt(input_string, deck, Opmode::DECRYPT);
+
+    EXPECT_TRUE(result == expected_result);
+    EXPECT_TRUE(deck == Deck(1));
 }
 
 // solitaire_ks: test encrypt
@@ -548,11 +550,21 @@ TEST(solitaire_ks, encrypt)
     std::string input_string {"AAA AAAA AAA"}; // input_string = "contents here"; would also work
     std::string expected_result {"EXKYIZSGEH"};
     auto deck = Deck(1);
+    
+    std::string result = encrypt(input_string, deck);
 
+    EXPECT_TRUE(result == expected_result);
+    EXPECT_TRUE(deck == Deck(1));
 }
 // solitaire_ks: test decrypt
 TEST(solitaire_ks, decrypt)
 {
-    auto deck = Deck(1);
+    std::string input_string {"EXKY IZS GEH!"};
+    std::string expected_result {"AAAAAAAAAA"};
 
+    auto deck = Deck(1);
+    std::string result = decrypt(input_string, deck);
+
+    EXPECT_TRUE(result == expected_result);
+    EXPECT_TRUE(deck == Deck(1));
 }

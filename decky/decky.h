@@ -93,14 +93,7 @@ struct Card {
     int32_t card_as_int() const;
 };
 
-std::ostream& operator<<(std::ostream& stream, const Card& card)
-{
-    // MAKE SURE TO PUT PARENS AROUND THE static_casts BECAUSE OTHERWISE C++ WILL TRY TO 
-    // DO A BINARY SHIFT LEFT ON THE INTS
-    // THE ERRORS MAKE THE DEAD RISE
-    stream << (static_cast<int32_t>(card.SUIT)) << " " << (static_cast<int32_t>(card.RANK));
-    return stream;
-}
+std::ostream& operator<<(std::ostream& stream, const Card& card);
 
 struct Deck {
 private:
@@ -203,10 +196,12 @@ public:
     //    std::print("\n");
     //}
 
-    void dump_numeric() const
-    {
-        std::print("Deck: ");
-    }
+    //void dump_numeric() const
+    //{
+    //    std::print("Deck: ");
+    //    for (const auto& card: deck)
+    //        std::print()
+    //}
 
     void dump() const
     {
@@ -236,3 +231,5 @@ std::string convert_uint8_to_string(const std::vector<uint8_t>& input_numbers);
 std::string crypt(const std::string& input, Deck deck, Opmode mode);
 std::string encrypt(const std::string& plaintext, const Deck& deck);
 std::string decrypt(const std::string& ciphertext, const Deck& deck);
+
+void process(std::istream& stream, const Deck& deck, const Opmode mode);

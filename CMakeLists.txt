@@ -9,6 +9,9 @@ set(CMAKE_C_STANDARD_REQUIRED On)
 set(CMAKE_C_EXTENSIONS Off)
 set(CMAKE_PROJECT_HOMEPAGE_URL "https://github.com/elibster/the_deck")
 
+set(ENCRYPTOR_APP encryptor)
+set(DECRYPTOR_APP decryptor)
+
 project(The_Deck
     VERSION 1.0.0
     DESCRIPTION "The deck of all things learning"
@@ -18,8 +21,10 @@ project(The_Deck
 
 add_subdirectory(decky)
 
-target_include_directories(${PROJECT_NAME} PUBLIC decky)
-target_link_libraries(${PROJECT_NAME} PUBLIC decky)
+target_include_directories(${ENCRYPTOR_APP} PUBLIC decky)
+target_link_libraries(${ENCRYPTOR_APP} PUBLIC decky)
+target_include_directories(${DECRYPTOR_APP} PUBLIC decky)
+target_link_libraries(${DECRYPTOR_APP} PUBLIC decky)
 
 # Set up the testing environment
 include(FetchContent)

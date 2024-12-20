@@ -1,4 +1,8 @@
 #include "decky.h"
+#include <print>
+#include <iostream>
+#include <fstream>
+
 
 uint8_t get_raw_keystream_value(Deck& deck)
 {
@@ -112,4 +116,16 @@ std::string encrypt(const std::string& plaintext, const Deck& deck)
 std::string decrypt(const std::string& ciphertext, const Deck& deck)
 {
     return crypt(ciphertext, deck, Opmode::DECRYPT);
+}
+
+void process(std::istream& stream, const Deck& deck, const Opmode mode)
+{
+    std::string line;
+    std::string message;
+
+    while(stream){
+        std::getline(stream, line);
+        message += line;
+    }
+    std::print(crypt(deck, message, mode));
 }

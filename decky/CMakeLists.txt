@@ -1,5 +1,6 @@
 set(LIBDECKY_SRC card.cpp deck.cpp solitaire.cpp)
-set(APPDECKY_SRC main.cpp)
+set(ENCRYPTOR_SRC main_encrypt.cpp)
+set(DECRYPTOR_SRC main_decrypt.cpp)
 
 add_library(decky STATIC)
 
@@ -16,4 +17,5 @@ if (MSVC)
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 endif()
 
-add_executable(${PROJECT_NAME} ${LIBDECKY_SRC} ${APPDECKY_SRC})
+add_executable(${ENCRYPTOR_APP} ${LIBDECKY_SRC} ${ENCRYPTOR_SRC})
+add_executable(${DECRYPTOR_APP} ${LIBDECKY_SRC} ${DECRYPTOR_SRC})
