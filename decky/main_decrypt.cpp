@@ -5,11 +5,12 @@
 
 int main(int argc, char *argv[])
 {
-    if (argc == 0)
+    if (argc <= 1)
         process(std::cin, Deck(1), Opmode::DECRYPT);
     else {
         std::ifstream foo(argv[1]);
         process(foo, Deck(1), Opmode::DECRYPT);
     }
+
     return 0;
 }
