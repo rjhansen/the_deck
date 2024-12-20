@@ -11,5 +11,6 @@ int main(int argc, char *argv[])
         std::ifstream foo(argv[1]);
         process(foo, Deck(1), Opmode::DECRYPT);
     }
+
     return 0;
 }
