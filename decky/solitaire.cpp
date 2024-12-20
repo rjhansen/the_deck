@@ -2,6 +2,7 @@
 #include <print>
 #include <iostream>
 #include <fstream>
+#include <string>
 
 
 uint8_t get_raw_keystream_value(Deck& deck)
@@ -122,10 +123,12 @@ void process(std::istream& stream, const Deck& deck, const Opmode mode)
 {
     std::string line;
     std::string message;
+    std::string result;
 
     while(stream){
         std::getline(stream, line);
         message += line;
     }
-    std::print(crypt(deck, message, mode));
+    result = crypt(message, deck, mode)
+    std::print("{}", result);
 }
