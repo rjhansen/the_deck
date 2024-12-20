@@ -123,12 +123,10 @@ void process(std::istream& stream, const Deck& deck, const Opmode mode)
 {
     std::string line;
     std::string message;
-    std::string result;
 
     while(stream){
         std::getline(stream, line);
         message += line;
     }
-    result = crypt(message, deck, mode)
-    std::print("{}", result);
+    std::print("{}", crypt(message, deck, mode));
 }
