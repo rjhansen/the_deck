@@ -5,9 +5,11 @@
 
 int main(int argc, char *argv[])
 {
-    std::istream& stream = argc == 1 ? std::cin : std::ifstream(argv[1]);
-
-    process(stream, Deck(1), Opmode::DECRYPT);
-
+    if (argc == 0)
+        process(std::cin, Deck(1), Opmode::DECRYPT);
+    else {
+        std::ifstream foo(argv[1]);
+        process(foo, Deck(1), Opmode::DECRYPT);
+    }
     return 0;
 }
