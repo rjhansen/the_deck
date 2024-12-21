@@ -1,15 +1,15 @@
 #include "decky.h"
-#include <print>
-#include <iostream>
 #include <fstream>
+#include <iostream>
+#include <print>
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     if (argc <= 1)
-        process(std::cin, Deck(1), Opmode::ENCRYPT);
+        process(std::cin, Deck(Deck::Kind::WITH_JOKERS), Opmode::ENCRYPT);
     else {
         std::ifstream foo(argv[1]);
-        process(foo, Deck(1), Opmode::ENCRYPT);
+        process(foo, Deck(Deck::Kind::WITH_JOKERS), Opmode::ENCRYPT);
     }
 
     return 0;
