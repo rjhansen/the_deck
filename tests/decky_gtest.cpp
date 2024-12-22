@@ -65,7 +65,7 @@ TEST(deck, size)
         EXPECT_TRUE(deck.size() == 52);
     }
     {
-        auto deck = Deck(1);
+        auto deck = Deck(1); // with jokers
         EXPECT_TRUE(deck.size() == 54);
     }
 }
@@ -74,7 +74,8 @@ TEST(deck, size)
 TEST(deck, copy_range)
 {
     Card cards[5] = { Card(0), Card(1), Card(2), Card(3), Card(4) };
-    auto deck = Deck(cards); // Ugh, C++. Evaluating the pointer to cards as a bool
+    auto deck = Deck(cards); 
+    // Ugh, C++. It evaluated the pointer to cards as a bool, so I had to change the param type to int
 
     EXPECT_TRUE(deck.deck.size() == 5);
     EXPECT_TRUE(deck[0] == Card(0));
@@ -512,7 +513,7 @@ TEST(solitaire_ks, convert_string_to_numbers)
 TEST(solitaire_ks, convert_numbers_to_string)
 {
     // The latest and greatest initialization style: curly braces
-    const std::vector<uint8_t> input_vector { 4, 15, 14, 15, 20, 21, 19, 5, 16, 3 };
+    const std::vector<uint8_t> input_vector { 4, 15, 14, 15, 20, 21, 19, 5, 16, 3 }; // new-style initialization
     const std::string correct_result { "DONOTUSEPC" };
 
     auto result = convert_uint8_to_string(input_vector);
@@ -547,7 +548,7 @@ TEST(solitaire_ks, crypt_decrypt)
 // solitaire_ks: test encrypt
 TEST(solitaire_ks, encrypt)
 {
-    std::string input_string {"AAA AAAA AAA"}; // input_string = "contents here"; would also work
+    std::string input_string {"AAA AAAA AAA"};
     std::string expected_result {"EXKYIZSGEH"};
     auto deck = Deck(1);
     
