@@ -1,16 +1,21 @@
 #include "decky.h"
 #include <fstream>
-#include <iostream>
-#include <print>
+
+using std::cin;
+using std::cout;
+using std::ifstream;
 
 int main(int argc, char* argv[])
 {
-    if (argc <= 1)
-        process(std::cin, Deck(Deck::Kind::WITH_JOKERS), Opmode::ENCRYPT);
-    else {
-        std::ifstream foo(argv[1]);
-        process(foo, Deck(Deck::Kind::WITH_JOKERS), Opmode::ENCRYPT);
+    auto deck = Deck(Deck::Kind::WITH_JOKERS);
+    auto mode = Opmode::ENCRYPT;
+
+    if (argc == 1) {
+        solitaire(cin, cout, deck, mode);
+    } else {
+        solitaire(ifstream(argv[1]), cout, deck, mode);
     }
+    cout << "\n";
 
     return 0;
 }

@@ -6,7 +6,6 @@
 #include <iostream>
 #include <iterator>
 #include <numeric>
-#include <print>
 #include <random>
 #include <span>
 #include <stdexcept>
@@ -123,11 +122,7 @@ public:
         , gen(rd())
     {
         deck.clear();
-#ifdef __APPLE__
         std::ranges::copy(other_deck, std::back_inserter(deck));
-#else
-        std::ranges::copy(other_deck, std::back_inserter(deck));
-#endif
     }
 
     Card& operator[](size_t index);
@@ -174,6 +169,64 @@ std::string crypt(const std::string& input, Deck deck, Opmode mode);
 std::string encrypt(const std::string& plaintext, const Deck& deck);
 std::string decrypt(const std::string& ciphertext, const Deck& deck);
 
-void process(std::istream& stream, const Deck& deck, Opmode mode);
+template <std::input_iterator T, std::output_iterator<uint8_t> U>
+void stl_crypt(T begin, T end, U output, const Deck& deck, Opmode mode)
+{
+    /* This templated function's complexity calls for some road signs.
+     * It's actually not bad: just pay attention to where in the code
+     * you are and you'll make it out fine. -- rjh */
+
+    /* Sanity checks */
+    if (end == begin)
+        return;
+    static_assert(sizeof(decltype(*begin)) == 1);
+
+    /* Make our own copy of external data */
+    Deck d(deck);
+    std::vector<uint8_t> tmp;
+    std::copy_if(begin,
+        end,
+        std::back_inserter(tmp),
+        [](auto x) { return ('A' <= x && 'Z' >= x); });
+    while (tmp.size() % 5)
+        tmp.push_back('X');
+
+    /* Define predicates we'll be using later */
+    auto keystream = [&](uint8_t c) -> uint8_t {
+        auto deck_val = get_keystream_value(d);
+        if (mode == Opmode::ENCRYPT) {
+            uint8_t v = c + deck_val;
+            while (v > 26)
+                v -= 26;
+            return 'A' - 1 + v;
+        }
+        int8_t v = static_cast<int8_t>(c) - static_cast<int8_t>(deck_val);
+        while (v < 0)
+            v += 26;
+        return 'A' - 1 + v;
+    };
+
+    /* Convert our message into Solitaire ordinals */
+    std::transform(tmp.cbegin(),
+        tmp.cend(),
+        tmp.begin(),
+        [](auto x) { return x - 'A' + 1; });
+
+    /* Apply the Solitaire algorithm */
+    std::transform(tmp.cbegin(), tmp.cend(), tmp.begin(), keystream);
+
+    /* Copy to output and we're done */
+    std::copy(tmp.cbegin(), tmp.cend(), output);
+}
+
+template <std::input_iterator T, std::output_iterator<uint8_t> U>
+void solitaire(T begin, T end, U output, const Deck& deck, Opmode mode)
+{
+    stl_crypt(begin, end, output, deck, mode);
+}
+void solitaire(std::istream&& input, std::ostream& output, const Deck& deck, Opmode mode);
+void solitaire(std::istream& input, std::ostream& output, const Deck& deck, Opmode mode);
+void solitaire(std::istream&& input, std::ostream&& output, const Deck& deck, Opmode mode);
+void solitaire(std::istream& input, std::ostream&& output, const Deck& deck, Opmode mode);
 
 #endif
