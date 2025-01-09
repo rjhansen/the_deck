@@ -54,12 +54,10 @@ vector<uint8_t> convert_string_to_uint8(string input_string)
         });
     input_string.erase(e.begin(), e.end());
     while (input_string.length() % 5)
-        input_string.append("X"); // input_string += "X"; would also work
+        input_string.append("X");
     transform(input_string,
         back_inserter(output),
-        [](const auto& x) {
-            return (static_cast<uint8_t>(x - 'A') + 1);
-        });
+        [](const auto& x) {return (static_cast<uint8_t>(x - 'A') + 1);});
     return output;
 }
 
@@ -68,9 +66,7 @@ string convert_uint8_to_string(const vector<uint8_t>& input_numbers)
     string output;
     transform(input_numbers,
         back_inserter(output),
-        [](const auto& x) {
-            return static_cast<char>(x - 1) + 'A';
-        });
+        [](const auto& x) {return static_cast<char>(x - 1) + 'A';});
     return output;
 }
 
@@ -95,34 +91,34 @@ string decrypt(const string& ciphertext, const Deck& deck)
     return crypt(ciphertext, deck, Opmode::DECRYPT);
 }
 
-void solitaire(std::istream&& input, std::ostream& output, const Deck& deck, Opmode mode)
+void solitaire(istream&& input, ostream& output, const Deck& deck, Opmode mode)
 {
-    auto i = std::istream_iterator<uint8_t>(input);
-    auto eof = std::istream_iterator<uint8_t>();
-    auto o = std::ostream_iterator<uint8_t>(output);
+    auto i = istream_iterator<uint8_t>(input);
+    auto eof = istream_iterator<uint8_t>();
+    auto o = ostream_iterator<uint8_t>(output);
     solitaire(i, eof, o, deck, mode);
 }
 
-void solitaire(std::istream& input, std::ostream& output, const Deck& deck, Opmode mode)
+void solitaire(istream& input, ostream& output, const Deck& deck, Opmode mode)
 {
-    auto i = std::istream_iterator<uint8_t>(input);
-    auto eof = std::istream_iterator<uint8_t>();
-    auto o = std::ostream_iterator<uint8_t>(output);
+    auto i = istream_iterator<uint8_t>(input);
+    auto eof = istream_iterator<uint8_t>();
+    auto o = ostream_iterator<uint8_t>(output);
     solitaire(i, eof, o, deck, mode);
 }
 
-void solitaire(std::istream&& input, std::ostream&& output, const Deck& deck, Opmode mode)
+void solitaire(istream&& input, ostream&& output, const Deck& deck, Opmode mode)
 {
-    auto i = std::istream_iterator<uint8_t>(input);
-    auto eof = std::istream_iterator<uint8_t>();
-    auto o = std::ostream_iterator<uint8_t>(output);
+    auto i = istream_iterator<uint8_t>(input);
+    auto eof = istream_iterator<uint8_t>();
+    auto o = ostream_iterator<uint8_t>(output);
     solitaire(i, eof, o, deck, mode);
 }
 
-void solitaire(std::istream& input, std::ostream&& output, const Deck& deck, Opmode mode)
+void solitaire(istream& input, ostream&& output, const Deck& deck, Opmode mode)
 {
-    auto i = std::istream_iterator<uint8_t>(input);
-    auto eof = std::istream_iterator<uint8_t>();
-    auto o = std::ostream_iterator<uint8_t>(output);
+    auto i = istream_iterator<uint8_t>(input);
+    auto eof = istream_iterator<uint8_t>();
+    auto o = ostream_iterator<uint8_t>(output);
     solitaire(i, eof, o, deck, mode);
 }
