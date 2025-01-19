@@ -13,7 +13,8 @@ using std::ostream_iterator;
 using std::string;
 using std::vector;
 using std::ranges::remove_if;
-using std::ranges::transform;
+using std::views::filter;
+using std::views::transform;
 
 uint8_t get_raw_keystream_value(Deck& deck)
 {
@@ -46,28 +47,19 @@ uint8_t get_keystream_value(Deck& deck)
 
 vector<uint8_t> convert_string_to_uint8(string input_string)
 {
-    vector<uint8_t> output;
-    transform(input_string, input_string.begin(), ::toupper);
-    auto e = remove_if(input_string,
-        [](const auto& x) {
-            return (x < 'A' || x > 'Z');
-        });
-    input_string.erase(e.begin(), e.end());
-    while (input_string.length() % 5)
-        input_string.append("X");
-    transform(input_string,
-        back_inserter(output),
-        [](const auto& x) {return (static_cast<uint8_t>(x - 'A') + 1);});
-    return output;
+    static const auto foo = [](const auto& x) { return ::toupper(x); };
+    static const auto bar = [](const auto& x) { return (x >= 'A' && x <= 'Z'); };
+    static const auto baz = [](const auto& x) { return static_cast<uint8_t>(x - 'A' + 1); };
+
+    auto quux = input_string | transform(foo) | filter(bar) | transform(baz);
+    return vector<uint8_t>(quux.begin(), quux.end());
 }
 
 string convert_uint8_to_string(const vector<uint8_t>& input_numbers)
 {
-    string output;
-    transform(input_numbers,
-        back_inserter(output),
-        [](const auto& x) {return static_cast<char>(x - 1) + 'A';});
-    return output;
+    static const auto foo = [](const auto& x) { return static_cast<char>(x - 1) + 'A'; };
+    auto letters { input_numbers | transform(foo) };
+    return string(letters.begin(), letters.end());
 }
 
 string crypt(const string& input, Deck deck, const Opmode mode)

@@ -9,6 +9,12 @@ set(CMAKE_C_STANDARD_REQUIRED On)
 set(CMAKE_C_EXTENSIONS Off)
 set(CMAKE_PROJECT_HOMEPAGE_URL "https://github.com/elibster/the_deck")
 
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  if (CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "GNU")
+    add_compile_options(-stdlib=libc++ -fexperimental-library)
+  endif()
+endif()
+
 set(ENCRYPTOR_APP encryptor)
 set(DECRYPTOR_APP decryptor)
 
