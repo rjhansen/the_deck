@@ -1,9 +1,9 @@
 /build/
 .fake
-.vscode/*
 /.vscode/
 /cmake-build-debug/
+/cmake-build-release/
 /docs/
 docs.zip
 .DS_Store
-
+/.idea/

@@ -4,23 +4,20 @@
 #include <print>
 #include <ranges>
 
-using std::range_error;
-using std::ranges::find_if;
-using std::logic_error;
 using std::array;
-using std::ranges::all_of;
-using std::views::zip;
 using std::get;
+using std::logic_error;
+using std::range_error;
 using std::string;
 using std::transform;
 using std::vector;
+using std::ranges::all_of;
+using std::ranges::find_if;
+using std::views::zip;
 
 using namespace The_Deck;
 
-TEST(card, deck_rank_too_high)
-{
-    EXPECT_THROW(Card(52), range_error);
-};
+TEST(card, deck_rank_too_high) { EXPECT_THROW(Card(52), range_error); };
 
 TEST(card, lt_correct)
 {
@@ -161,7 +158,9 @@ TEST(deck, deal_middle)
 TEST(deck, arbitrary_cards)
 {
     auto deck = Deck();
-    auto Pred = [](const Card& x) { return x.SUIT == Card::Suit::CLUB; }; // Lambda fxn that returns true if the card is a club
+    auto Pred = [](const Card& x) {
+        return x.SUIT == Card::Suit::CLUB;
+    }; // Lambda fxn that returns true if the card is a club
 
     deck.remove_if(Pred);
 
@@ -187,12 +186,9 @@ TEST(deck, insert_arbitrary)
     {
         auto deck = Deck();
         bool exception_thrown = false;
-        try
-        {
+        try {
             deck.insert(joker, 100);
-        }
-        catch (std::out_of_range& _)
-        {
+        } catch (std::out_of_range& _) {
             exception_thrown = true;
         }
         EXPECT_TRUE(exception_thrown);
@@ -222,7 +218,8 @@ TEST(deck, triple_cut)
         deck.triple_cut();
 
         for (size_t i = 0; i < deck2.size(); i++)
-            EXPECT_TRUE(deck[i + 1] == deck2[i]); // one card ahead of the increment (the first joker)
+            EXPECT_TRUE(
+                deck[i + 1] == deck2[i]); // one card ahead of the increment (the first joker)
         EXPECT_TRUE(*(deck.deck.crbegin()) == Card(Card::Suit::NONE, Card::Rank::JOKER_B));
     }
 
@@ -445,26 +442,21 @@ TEST(solitaire_ks, keystream_generation)
 
     // this assumes the algorithm skips a 53 at step 4
     array<uint8_t, 10> test_vector { 4, 49, 10, 24, 8, 51, 44, 6, 4, 33 };
-    array<uint8_t, 10> results {0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    array<uint8_t, 10> results { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     std::transform(results.begin(), results.end(), results.begin(),
-        [&](const auto& _)
-        {
-            return get_raw_keystream_value(deck);
-        });
+        [&](const auto& _) { return get_raw_keystream_value(deck); });
 
     EXPECT_TRUE(all_of(zip(test_vector, results),
-        [](const auto& x)
-        {
-            return get<0>(x) == get<1>(x);
-        }));
+        [](const auto& x) { return get<0>(x) == get<1>(x); }));
 }
 
 TEST(solitaire_ks, convert_string_to_numbers)
 {
-    const array<uint8_t, 10> correct_result = { 4, 15, 14, 15, 20, 21, 19, 5, 16, 3 };
+    const array<uint8_t, 10> correct_result = { 4, 15, 14, 15, 20,
+        21, 19, 5, 16, 3 };
     auto result = convert_string_to_uint8("Do not use PC!");
     EXPECT_TRUE(all_of(zip(result, correct_result),
-        [](const auto &x) { return get<0>(x) == get<1>(x); }));
+        [](const auto& x) { return get<0>(x) == get<1>(x); }));
 }
 
 TEST(solitaire_ks, convert_numbers_to_string)
@@ -477,8 +469,10 @@ TEST(solitaire_ks, convert_numbers_to_string)
 
 TEST(solitaire_ks, crypt_encrypt)
 {
-    string input_string {"AAA aaaa AAA"}; // input_string = "contents here"; would also work
-    string expected_result {"EXKYIZSGEH"};
+    string input_string {
+        "AAA aaaa AAA"
+    }; // input_string = "contents here"; would also work
+    string expected_result { "EXKYIZSGEH" };
     auto deck = Deck(Deck::Kind::WITH_JOKERS);
     string result = crypt(input_string, deck, Opmode::ENCRYPT);
 
@@ -488,8 +482,8 @@ TEST(solitaire_ks, crypt_encrypt)
 
 TEST(solitaire_ks, crypt_decrypt)
 {
-    string input_string {"EXKY IZS GEH!"};
-    string expected_result {"AAAAAAAAAA"};
+    string input_string { "EXKY IZS GEH!" };
+    string expected_result { "AAAAAAAAAA" };
 
     auto deck = Deck(Deck::Kind::WITH_JOKERS);
     string result = crypt(input_string, deck, Opmode::DECRYPT);
@@ -500,10 +494,12 @@ TEST(solitaire_ks, crypt_decrypt)
 
 TEST(solitaire_ks, encrypt)
 {
-    string input_string {"AAA AAAA AAA"}; // input_string = "contents here"; would also work
-    string expected_result {"EXKYIZSGEH"};
+    string input_string {
+        "AAA AAAA AAA"
+    }; // input_string = "contents here"; would also work
+    string expected_result { "EXKYIZSGEH" };
     auto deck = Deck(Deck::Kind::WITH_JOKERS);
-    
+
     string result = encrypt(input_string, deck);
 
     EXPECT_TRUE(result == expected_result);
@@ -512,8 +508,8 @@ TEST(solitaire_ks, encrypt)
 
 TEST(solitaire_ks, decrypt)
 {
-    string input_string {"EXKY IZS GEH!"};
-    string expected_result {"AAAAAAAAAA"};
+    string input_string { "EXKY IZS GEH!" };
+    string expected_result { "AAAAAAAAAA" };
 
     auto deck = Deck(Deck::Kind::WITH_JOKERS);
     string result = decrypt(input_string, deck);
