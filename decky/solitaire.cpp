@@ -1,7 +1,5 @@
 #include "decky.h"
 #include <fstream>
-#include <iostream>
-#include <print>
 #include <ranges>
 #include <string>
 
@@ -10,6 +8,7 @@ using std::istream;
 using std::istream_iterator;
 using std::ostream;
 using std::ostream_iterator;
+using std::span;
 using std::string;
 using std::vector;
 using std::ranges::remove_if;
@@ -52,17 +51,17 @@ vector<uint8_t> convert_string_to_uint8(string input_string)
     static const auto baz = [](const auto& x) { return static_cast<uint8_t>(x - 'A' + 1); };
 
     auto quux = input_string | transform(foo) | filter(bar) | transform(baz);
-    return vector<uint8_t>(quux.begin(), quux.end());
+    return {quux.begin(), quux.end()};
 }
 
-string convert_uint8_to_string(const vector<uint8_t>& input_numbers)
+string convert_uint8_to_string(const span<const uint8_t> input_numbers)
 {
     static const auto foo = [](const auto& x) { return static_cast<char>(x - 1) + 'A'; };
     auto letters { input_numbers | transform(foo) };
-    return string(letters.begin(), letters.end());
+    return { letters.begin(), letters.end() };
 }
 
-string crypt(const string& input, Deck deck, const Opmode mode)
+string crypt(const string& input, const Deck& deck, const Opmode mode)
 {
     string output;
     stl_crypt(input.cbegin(),

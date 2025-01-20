@@ -126,13 +126,12 @@ struct Card {
     Card(const Card& other) = default;
     Card& operator=(const Card& other) = default;
 
-    bool operator<(const Card& other) const; // the const at the end tells the compiler that this will never change the state of the object
+    bool operator<(const Card& other) const;
     bool operator==(const Card& other) const;
 
     [[nodiscard]]
     /** Returns this object’s value in the range (0, 51) inclusive.
-     * 
-     * @bug Doesn’t support jokers.
+     *
      * @since December 2024
      * @author Eugene Libster <elibster@gmail.com>
     */
@@ -149,16 +148,12 @@ std::ostream& operator<<(std::ostream& stream, const Card& card);
 
 /** Represents a deck of cards and supports many standard deck operations.
  * 
- * @bug Each instance gets its own handle to the system high-quality random
- * number generator. Be careful not to exhaust your system’s entropy.
- * 
  * @since December 2024
  * @author Eugene Libster <elibster@gmail.com>
  */
 struct Deck {
 private:
-    std::random_device rd;
-    std::mt19937 gen;
+    static std::mt19937 gen;
     static const Card JOKER_A;
     static const Card JOKER_B;
 
@@ -178,8 +173,6 @@ public:
     };
 
     explicit Deck(Kind k = Kind::WITHOUT_JOKERS)
-        : rd()
-        , gen(rd()) // No curly brackets needed when calling a member's constructor directly
     {
         std::vector<int> zero_to_51(52);
         std::iota(zero_to_51.begin(), zero_to_51.end(), 0);
@@ -191,12 +184,7 @@ public:
         }
     }
 
-    Deck(const Deck& other)
-        : rd()
-        , gen(rd())
-        , deck(other.deck)
-    {
-    }
+    Deck(const Deck& other) = default;
 
     /** Used to initialize a deck from any generic sequence of cards,
      * including arrays of them.
@@ -205,8 +193,6 @@ public:
      * @author Eugene Libster <elibster@gmail.com>
      */
     explicit Deck(const std::span<const Card>& other_deck)
-        : rd()
-        , gen(rd())
     {
         deck.clear();
         std::ranges::copy(other_deck, std::back_inserter(deck));
@@ -260,7 +246,7 @@ public:
      * @since December 2024
      * @author Eugene Libster <elibster@gmail.com>
      */
-    Card deal(size_t position);
+    Card deal(long position);
 
     /** Inserts a card anywhere in the deck. Useful for shenanigans, and
      * extremely useful for implementing Solitaire.
@@ -270,7 +256,7 @@ public:
      * @since December 2024
      * @author Eugene Libster <elibster@gmail.com>
      */
-    void insert(const Card& card, size_t position);
+    void insert(const Card& card, long position);
 
     /** Performs a Solitaire triple cut.
      * 
@@ -385,14 +371,14 @@ std::vector<uint8_t> convert_string_to_uint8(std::string input_string);
  * @since December 2024
  * @author Eugene Libster <elibster@gmail.com>
  */
-std::string convert_uint8_to_string(const std::vector<uint8_t>& input_numbers);
+std::string convert_uint8_to_string(std::span<const uint8_t> input_numbers);
 
 /** Runs the Solitaire algorithm on a given string.
  * 
  * @since December 2024
  * @author Eugene Libster <elibster@gmail.com>
 */
-std::string crypt(const std::string& input, Deck deck, Opmode mode);
+std::string crypt(const std::string& input, const Deck& deck, Opmode mode);
 
 /** Runs the Solitaire encryption algorithm on a given string.
  * 
@@ -423,7 +409,6 @@ void stl_crypt(T begin, T end, U output, const Deck& deck, Opmode mode)
     if (end == begin)
         return;
 
-    std::vector<uint8_t> tmp = convert_string_to_uint8(std::string { begin, end });
     Deck d(deck);
 
     auto keystream = [&](uint8_t c) -> uint8_t {
@@ -434,21 +419,25 @@ void stl_crypt(T begin, T end, U output, const Deck& deck, Opmode mode)
                 v -= 26;
             return 'A' - 1 + v;
         }
+        // Narrowing conversions from unsigned integers to signed ones are
+        // technically implementation-defined, except in the case where the
+        // values lie within the range of the narrowed type. That's the case
+        // here.
         int8_t v = static_cast<int8_t>(c) - static_cast<int8_t>(deck_val);
         while (v < 0)
             v += 26;
         return 'A' - 1 + v;
     };
 
-    auto result = convert_string_to_uint8(std::string { begin, end })
-        | std::views::transform(keystream);
-
-    std::ranges::copy(result, output);
+    std::ranges::copy(
+        convert_string_to_uint8({ begin, end })
+            | std::views::transform(keystream),
+        output);
 }
 
 /** Provides another STL-friendly face for Solitaire. 
  * 
- * * @since January 2025
+ * @since January 2025
  * @author Rob Hansen <rob@hansen.engineering>
 */
 template <std::input_iterator T, std::output_iterator<uint8_t> U>
@@ -459,28 +448,28 @@ void solitaire(T begin, T end, U output, const Deck& deck, Opmode mode)
 
 /** Provides another STL-friendly face for Solitaire.
  * 
- * * @since January 2025
+ * @since January 2025
  * @author Rob Hansen <rob@hansen.engineering>
 */
 void solitaire(std::istream&& input, std::ostream& output, const Deck& deck, Opmode mode);
 
 /** Provides another STL-friendly face for Solitaire.
  * 
- * * @since January 2025
+ * @since January 2025
  * @author Rob Hansen <rob@hansen.engineering>
 */
 void solitaire(std::istream& input, std::ostream& output, const Deck& deck, Opmode mode);
 
 /** Provides another STL-friendly face for Solitaire.
  * 
- * * @since January 2025
+ * @since January 2025
  * @author Rob Hansen <rob@hansen.engineering>
 */
 void solitaire(std::istream&& input, std::ostream&& output, const Deck& deck, Opmode mode);
 
 /** Provides another STL-friendly face for Solitaire.
  * 
- * * @since January 2025
+ * @since January 2025
  * @author Rob Hansen <rob@hansen.engineering>
 */
 void solitaire(std::istream& input, std::ostream&& output, const Deck& deck, Opmode mode);

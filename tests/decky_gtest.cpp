@@ -8,7 +8,11 @@ using std::range_error;
 using std::ranges::find_if;
 using std::logic_error;
 using std::array;
+using std::ranges::all_of;
+using std::views::zip;
+using std::get;
 using std::string;
+using std::transform;
 using std::vector;
 
 
@@ -181,8 +185,16 @@ TEST(deck, insert_arbitrary)
 
     {
         auto deck = Deck();
-        deck.insert(joker, 100);
-        EXPECT_TRUE(deck[52] == joker);
+        bool exception_thrown = false;
+        try
+        {
+            deck.insert(joker, 100);
+        }
+        catch (std::out_of_range& _)
+        {
+            exception_thrown = true;
+        }
+        EXPECT_TRUE(exception_thrown);
     }
 }
 
@@ -428,36 +440,38 @@ TEST(solitaire_ks, deck_state)
 
 TEST(solitaire_ks, keystream_generation)
 {
-    uint8_t test_vector[10] = { 4, 49, 10, 24, 8, 51, 44, 6, 4, 33 }; // this assumes the algorithm skips a 53 at step 4
-    auto deck = Deck(Deck::Kind::WITH_JOKERS); // deck with jokers
-    uint8_t ks_val = 0;
+    auto deck = Deck(Deck::Kind::WITH_JOKERS);
 
-    for (const auto& x : test_vector) {
-        ks_val = get_raw_keystream_value(deck);
-        EXPECT_TRUE(x == ks_val);
-    }
+    // this assumes the algorithm skips a 53 at step 4
+    array<uint8_t, 10> test_vector { 4, 49, 10, 24, 8, 51, 44, 6, 4, 33 };
+    array<uint8_t, 10> results {0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    std::transform(results.begin(), results.end(), results.begin(),
+        [&](const auto& _)
+        {
+            return get_raw_keystream_value(deck);
+        });
+
+    EXPECT_TRUE(all_of(zip(test_vector, results),
+        [](const auto& x)
+        {
+            return get<0>(x) == get<1>(x);
+        }));
 }
 
 TEST(solitaire_ks, convert_string_to_numbers)
 {
-    const char* input_string = "Do not use PC!";
     const array<uint8_t, 10> correct_result = { 4, 15, 14, 15, 20, 21, 19, 5, 16, 3 };
-
-    auto result = convert_string_to_uint8(input_string);
-
-    for (size_t i = 0; i < result.size(); i++)
-        EXPECT_TRUE(result[i] == correct_result[i]);
+    auto result = convert_string_to_uint8("Do not use PC!");
+    EXPECT_TRUE(all_of(zip(result, correct_result),
+        [](const auto &x) { return get<0>(x) == get<1>(x); }));
 }
 
 TEST(solitaire_ks, convert_numbers_to_string)
 {
     const vector<uint8_t> input_vector { 4, 15, 14, 15, 20, 21, 19, 5, 16, 3 };
     const string correct_result { "DONOTUSEPC" };
-
-    auto result = convert_uint8_to_string(input_vector);
-
-    for (size_t i = 0; i < result.size(); i++)
-        EXPECT_TRUE(result[i] == correct_result[i]);
+    const auto result = convert_uint8_to_string(input_vector);
+    EXPECT_TRUE(result == correct_result);
 }
 
 TEST(solitaire_ks, crypt_encrypt)
