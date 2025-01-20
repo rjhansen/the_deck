@@ -15,6 +15,7 @@ using std::string;
 using std::transform;
 using std::vector;
 
+using namespace The_Deck;
 
 TEST(card, deck_rank_too_high)
 {
