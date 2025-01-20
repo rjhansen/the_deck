@@ -425,8 +425,26 @@ void stl_crypt(T begin, T end, U output, const Deck& deck, Opmode mode)
         return 'A' - 1 + v;
     };
 
-    std::ranges::copy(convert_string_to_uint8({ begin, end }) | std::views::transform(keystream),
-        output);
+    std::string working_copy { begin, end };
+    std::transform(working_copy.begin(), working_copy.end(), working_copy.begin(),
+        [](const auto& x) -> uint8_t { return ::toupper(x); });
+    auto filtered_working_copy = std::views::filter(working_copy,
+        [](const auto& x) { return (x >= 'A' && x <= 'Z'); });
+    std::string codesheet { filtered_working_copy.begin(), filtered_working_copy.end() };
+    while (codesheet.size() % 5)
+        codesheet += "X";
+    const auto result { convert_string_to_uint8(codesheet)
+        | std::views::transform(keystream) };
+    auto result_iter = result.begin();
+    uint32_t index { 0 };
+    while (result_iter != result.end()) {
+        if (index && (index % 40 == 0))
+            *output++ = '\n';
+        else if (index && (index % 5 == 0))
+            *output++ = ' ';
+        index += 1;
+        *output++ = *result_iter++;
+    }
 }
 
 /** Provides another STL-friendly face for Solitaire.
