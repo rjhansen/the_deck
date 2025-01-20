@@ -1,4 +1,4 @@
-#include "decky.h"
+#include "the_deck.h"
 
 namespace The_Deck {
 bool Card::operator<(

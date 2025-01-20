@@ -1,4 +1,6 @@
-cmake_minimum_required(VERSION 3.29.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.30.0 FATAL_ERROR)
+
+enable_testing()
 
 # C++ Language-specific variables, setting build env constraints
 set(CMAKE_CXX_STANDARD 23)
@@ -9,14 +11,16 @@ set(CMAKE_C_STANDARD_REQUIRED On)
 set(CMAKE_C_EXTENSIONS Off)
 set(CMAKE_PROJECT_HOMEPAGE_URL "https://github.com/elibster/the_deck")
 
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
+option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
+
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   if (CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "GNU")
     add_compile_options(-stdlib=libc++ -fexperimental-library)
   endif()
 endif()
-
-set(ENCRYPTOR_APP encryptor)
-set(DECRYPTOR_APP decryptor)
 
 project(The_Deck
     VERSION 1.0.0
@@ -24,29 +28,14 @@ project(The_Deck
     LANGUAGES CXX C
     HOMEPAGE_URL CMAKE_PROJECT_HOMEPAGE_URL)
 
-
+set(INSTALL_GTEST OFF)
 add_subdirectory(decky)
+add_subdirectory(tests)
+add_subdirectory(examples)
 
-target_include_directories(${ENCRYPTOR_APP} PUBLIC decky)
-target_link_libraries(${ENCRYPTOR_APP} PUBLIC decky)
-target_include_directories(${DECRYPTOR_APP} PUBLIC decky)
-target_link_libraries(${DECRYPTOR_APP} PUBLIC decky)
-
-# Set up the testing environment
-include(FetchContent)
-FetchContent_Declare(
-    googletest
-    URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
-)
-if (MSVC)
-    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+if (UNIX OR APPLE)
+  include(GNUInstallDirs)
 endif()
-FetchContent_MakeAvailable(googletest)
 
-Include(GoogleTest)
-
-enable_testing()
-add_executable(decky_gtest tests/decky_gtest.cpp)
-target_link_libraries(decky_gtest decky GTest::gtest_main)
-target_include_directories(decky_gtest PUBLIC decky)
-gtest_add_tests(TARGET decky_gtest)
+install(TARGETS the_deck LIBRARY)
+install(FILES decky/the_deck.h DESTINATION include)

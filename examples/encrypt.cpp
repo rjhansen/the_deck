@@ -1,4 +1,4 @@
-#include "decky.h"
+#include "../decky/the_deck.h"
 #include <fstream>
 
 using std::cin;
@@ -12,7 +12,7 @@ using The_Deck::solitaire;
 int main(int argc, char* argv[])
 {
     auto deck = Deck(Deck::Kind::WITH_JOKERS);
-    auto mode = Opmode::DECRYPT;
+    auto mode = Opmode::ENCRYPT;
 
     if (argc == 1) {
         solitaire(cin, cout, deck, mode);

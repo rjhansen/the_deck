@@ -2,7 +2,7 @@
 #include <stdexcept>
 #include <tuple>
 
-#include "decky.h"
+#include "the_deck.h"
 
 using std::get;
 using std::logic_error;
