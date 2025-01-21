@@ -22,8 +22,8 @@ using std::views::zip;
 namespace The_Deck {
 mt19937 Deck::gen { random_device {}() };
 
-const Card Deck::JOKER_A(Card::Suit::NONE, Card::Rank::JOKER_A);
-const Card Deck::JOKER_B(Card::Suit::NONE, Card::Rank::JOKER_B);
+DllExport const Card Deck::JOKER_A(Card::Suit::NONE, Card::Rank::JOKER_A);
+DllExport const Card Deck::JOKER_B(Card::Suit::NONE, Card::Rank::JOKER_B);
 
 Card& Deck::operator[](size_t index) { return deck.at(index); }
 

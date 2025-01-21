@@ -11,5 +11,7 @@ set_target_properties(the_deck PROPERTIES
 # Prevents us from having to explicitly specify every export by hand
 # if we ever build a DLL.
 if (MSVC)
+    include(GenerateExportHeader)
+    generate_export_header(the_deck)
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 endif()

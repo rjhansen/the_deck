@@ -1,5 +1,10 @@
 #ifndef DECKY_H
 #define DECKY_H
+#ifdef _WIN32
+#define DllExport __declspec(dllexport)
+#else
+#define DllExport
+#endif
 
 #include <algorithm>
 #include <cstdint>
@@ -19,7 +24,7 @@ namespace The_Deck {
  * @since December 2024
  * @author Eugene Libster <elibster@gmail.com>
  */
-enum class Opmode { ENCRYPT = 0,
+enum class DllExport Opmode { ENCRYPT = 0,
     DECRYPT };
 
 /** A convenience class that encapsulates typesafe information about
@@ -29,14 +34,14 @@ enum class Opmode { ENCRYPT = 0,
  * @since December 2024
  * @author Eugene Libster <elibster@gmail.com>
  */
-struct Card {
+struct DllExport Card {
     /** Following standard poker rules, there are five possible suits
      * once the joker cards are included in the deck.
      *
      * @since December 2024
      * @author Eugene Libster <elibster@gmail.com>
      */
-    enum class Suit { CLUB = 0,
+    enum class DllExport Suit { CLUB = 0,
         DIAMOND,
         HEART,
         SPADE,
@@ -48,7 +53,7 @@ struct Card {
      * @since December 2024
      * @author Eugene Libster <elibster@gmail.com>
      */
-    enum class Rank {
+    enum class DllExport Rank {
         ACE = 0,
         TWO,
         THREE,
@@ -141,14 +146,14 @@ struct Card {
  * @since December 2024
  * @author Eugene Libster <elibster@gmail.com>
  */
-std::ostream& operator<<(std::ostream& stream, const Card& card);
+DllExport std::ostream& operator<<(std::ostream& stream, const Card& card);
 
 /** Represents a deck of cards and supports many standard deck operations.
  *
  * @since December 2024
  * @author Eugene Libster <elibster@gmail.com>
  */
-struct Deck {
+struct DllExport Deck {
 private:
     static std::mt19937 gen;
     static const Card JOKER_A;
@@ -343,7 +348,7 @@ public:
  * @since December 2024
  * @author Eugene Libster <elibster@gmail.com>
  */
-uint8_t get_raw_keystream_value(Deck& deck);
+DllExport uint8_t get_raw_keystream_value(Deck& deck);
 
 /** Returns the next Solitaire keystream value from the deck,
  * in range (1, 26) inclusive.
@@ -351,7 +356,7 @@ uint8_t get_raw_keystream_value(Deck& deck);
  * @since December 2024
  * @author Eugene Libster <elibster@gmail.com>
  */
-uint8_t get_keystream_value(Deck& deck);
+DllExport uint8_t get_keystream_value(Deck& deck);
 
 /** Converts a string into a sequence of integers ready for
  * Solitaire.
@@ -359,7 +364,7 @@ uint8_t get_keystream_value(Deck& deck);
  * @since December 2024
  * @author Eugene Libster <elibster@gmail.com>
  */
-std::vector<uint8_t> convert_string_to_uint8(std::string input_string);
+DllExport std::vector<uint8_t> convert_string_to_uint8(std::string input_string);
 
 /** Converts a vector of integers into a string of characters.
  *
@@ -367,28 +372,28 @@ std::vector<uint8_t> convert_string_to_uint8(std::string input_string);
  * @since December 2024
  * @author Eugene Libster <elibster@gmail.com>
  */
-std::string convert_uint8_to_string(std::span<const uint8_t> input_numbers);
+DllExport std::string convert_uint8_to_string(std::span<const uint8_t> input_numbers);
 
 /** Runs the Solitaire algorithm on a given string.
  *
  * @since December 2024
  * @author Eugene Libster <elibster@gmail.com>
  */
-std::string crypt(const std::string& input, const Deck& deck, Opmode mode);
+DllExport std::string crypt(const std::string& input, const Deck& deck, Opmode mode);
 
 /** Runs the Solitaire encryption algorithm on a given string.
  *
  * @since December 2024
  * @author Eugene Libster <elibster@gmail.com>
  */
-std::string encrypt(const std::string& plaintext, const Deck& deck);
+DllExport std::string encrypt(const std::string& plaintext, const Deck& deck);
 
 /** Runs the Solitaire decryption algorithm on a given string.
  *
  * @since December 2024
  * @author Eugene Libster <elibster@gmail.com>
  */
-std::string decrypt(const std::string& ciphertext, const Deck& deck);
+DllExport std::string decrypt(const std::string& ciphertext, const Deck& deck);
 
 /** Provides an STL-friendly interface to the Solitaire algorithm.
  *
@@ -463,7 +468,7 @@ void solitaire(T begin, T end, U output, const Deck& deck, Opmode mode)
  * @since January 2025
  * @author Rob Hansen <rob@hansen.engineering>
  */
-void solitaire(std::istream&& input, std::ostream& output, const Deck& deck,
+DllExport void solitaire(std::istream&& input, std::ostream& output, const Deck& deck,
     Opmode mode);
 
 /** Provides another STL-friendly face for Solitaire.
@@ -471,7 +476,7 @@ void solitaire(std::istream&& input, std::ostream& output, const Deck& deck,
  * @since January 2025
  * @author Rob Hansen <rob@hansen.engineering>
  */
-void solitaire(std::istream& input, std::ostream& output, const Deck& deck,
+DllExport void solitaire(std::istream& input, std::ostream& output, const Deck& deck,
     Opmode mode);
 
 /** Provides another STL-friendly face for Solitaire.
@@ -479,7 +484,7 @@ void solitaire(std::istream& input, std::ostream& output, const Deck& deck,
  * @since January 2025
  * @author Rob Hansen <rob@hansen.engineering>
  */
-void solitaire(std::istream&& input, std::ostream&& output, const Deck& deck,
+DllExport void solitaire(std::istream&& input, std::ostream&& output, const Deck& deck,
     Opmode mode);
 
 /** Provides another STL-friendly face for Solitaire.
@@ -487,7 +492,7 @@ void solitaire(std::istream&& input, std::ostream&& output, const Deck& deck,
  * @since January 2025
  * @author Rob Hansen <rob@hansen.engineering>
  */
-void solitaire(std::istream& input, std::ostream&& output, const Deck& deck,
+DllExport void solitaire(std::istream& input, std::ostream&& output, const Deck& deck,
     Opmode mode);
 } // namespace The_Deck
 #endif
