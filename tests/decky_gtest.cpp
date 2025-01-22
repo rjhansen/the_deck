@@ -472,10 +472,9 @@ TEST(solitaire_ks, crypt_encrypt)
     string input_string {
         "AAA aaaa AAA"
     }; // input_string = "contents here"; would also work
-    string expected_result { "EXKYIZSGEH" };
+    string expected_result { "EXKYI ZSGEH" };
     auto deck = Deck(Deck::Kind::WITH_JOKERS);
     string result = crypt(input_string, deck, Opmode::ENCRYPT);
-
     EXPECT_TRUE(result == expected_result);
     EXPECT_TRUE(deck == Deck(Deck::Kind::WITH_JOKERS));
 }
@@ -483,11 +482,10 @@ TEST(solitaire_ks, crypt_encrypt)
 TEST(solitaire_ks, crypt_decrypt)
 {
     string input_string { "EXKY IZS GEH!" };
-    string expected_result { "AAAAAAAAAA" };
+    string expected_result { "AAAAA AAAAA" };
 
     auto deck = Deck(Deck::Kind::WITH_JOKERS);
     string result = crypt(input_string, deck, Opmode::DECRYPT);
-
     EXPECT_TRUE(result == expected_result);
     EXPECT_TRUE(deck == Deck(Deck::Kind::WITH_JOKERS));
 }
@@ -497,7 +495,7 @@ TEST(solitaire_ks, encrypt)
     string input_string {
         "AAA AAAA AAA"
     }; // input_string = "contents here"; would also work
-    string expected_result { "EXKYIZSGEH" };
+    string expected_result { "EXKYI ZSGEH" };
     auto deck = Deck(Deck::Kind::WITH_JOKERS);
 
     string result = encrypt(input_string, deck);
@@ -509,7 +507,7 @@ TEST(solitaire_ks, encrypt)
 TEST(solitaire_ks, decrypt)
 {
     string input_string { "EXKY IZS GEH!" };
-    string expected_result { "AAAAAAAAAA" };
+    string expected_result { "AAAAA AAAAA" };
 
     auto deck = Deck(Deck::Kind::WITH_JOKERS);
     string result = decrypt(input_string, deck);
