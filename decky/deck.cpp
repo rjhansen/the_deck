@@ -1,11 +1,10 @@
-#include <ranges>
-#include <stdexcept>
+#include "the_deck.h"
 #include <tuple>
 
-#include "the_deck.h"
-
 using std::get;
+using std::lock_guard;
 using std::logic_error;
+using std::mutex;
 using std::mt19937;
 using std::ostream;
 using std::out_of_range;
@@ -20,8 +19,6 @@ using std::ranges::find_if;
 using std::views::zip;
 
 namespace The_Deck {
-mt19937 Deck::gen { random_device {}() };
-
 const Card Deck::JOKER_A(Card::Suit::NONE, Card::Rank::JOKER_A);
 const Card Deck::JOKER_B(Card::Suit::NONE, Card::Rank::JOKER_B);
 
@@ -35,7 +32,11 @@ bool Deck::operator==(const Deck& other) const
         [](const auto& item) { return get<0>(item) == get<1>(item); });
 }
 
-void Deck::shuffle() { std::ranges::shuffle(deck, gen); }
+void Deck::shuffle()
+{
+    const lock_guard<mutex> lock(gen_mutex);
+    std::ranges::shuffle(deck, gen); 
+}
 
 void Deck::sort() { std::sort(deck.begin(), deck.end()); }
 

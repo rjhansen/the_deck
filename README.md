@@ -18,13 +18,55 @@ Views equivalents.
 * GNU C++ 14.2.1 on x86_64 Linux
 * Clang 16 on Apple Silicon
 
-# Building
+# Windows
+## Building
+I’m assuming you’re building from a PowerShell developer prompt.
 
-## UNIX and MacOS
-
-It’s as simple as:
-
+```powershell
+PS> Remove-Item -Recurse -Force build
+PS> Remove-Item -Recurse -Force artifacts
+PS> New-Item -Name build -ItemType Directory
+PS> New-Item -Name artifacts -ItemType Directory
+PS> New-Item -Name artifacts\dev -ItemType Directory
+PS> New-Item -Name artifacts\gtest -ItemType Directory
+PS> Set-Location -Path build
+PS> cmake -S .. -B . 
+PS> msbuild the_deck.sln -p:Configuration=Release
+PS> Copy-Item decky\Release\* -Destination ..\artifacts\dev
+PS> Copy-Item ..\decky\the_deck.h -Destination ..\artifacts\dev
+PS> Copy-Item bin\Release\gtest.dll -Destination ..\artifacts\gtest
+PS> Copy-Item bin\Release\gtest_main.dll -Destination ..\artifacts\gtest
+PS> Copy-Item tests\Release\decky_gtest.exe -Destination ..\artifacts\gtest
+PS> Set-Location -Path ..
+PS> Remove-Item -Recurse -Force build
 ```
+
+This is provided for you as `build.ps1`.
+
+The useful build artifacts are `the_deck.lib`, `the_deck.dll`, and 
+`the_deck.exp`. They can all be found under `artifacts\dev`.
+
+## Testing
+After running the build script, `artifacts\gtest\decky_gtest.exe`.
+
+## Developing
+Ensure that `the_deck.h` is somewhere on your include path. You can then
+do something like:
+
+```powershell
+PS> cl.exe /EHsc /O1 /std:c++latest /Iartifacts\dev \
+    examples\encrypt.cpp /Fesolitaire_encrypt.exe /link \
+    artifacts\dev\the_deck.lib
+PS> Copy-Item artifacts\dev\the_deck.dll -Destination .
+PS> .\solitaire_encrypt
+```
+
+Enter some text followed by Ctrl-Z to exit.
+
+# MacOS and UNIX
+
+## Building
+```bash
 $ rm -rf build
 $ mkdir build
 $ cd build
@@ -32,33 +74,30 @@ $ cmake -S.. -B. -GNinja -DCMAKE_BUILD_TYPE=Release
 $ ninja
 $ sudo ninja install
 $ cd ..
-$ rm -rf build
 ```
 
-In fact, it’s so simple there’s an included shell script to do it
-for you: `build.sh`!
+There’s an included shell script (`build.sh`) to do it all for you.
 
-## MacOS-specific instructions
+### MacOS-specific instructions
 I haven’t yet figured out how to do `@rpath` substitution, so for 
 now please add the line 
 
-```
+```bash
 export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/usr/local/lib
 ```
 
 … to your `$HOME/.zprofile` file.
 
-# Using `the_deck`
+## Testing
 
-Once you have it installed, using it in your own code is
-straightforward.
+From within the build tree, `ctest` should do well.
 
-```
+## Developing
+
+```bash
 $ clang++ -std=c++23 -stdlib=libc++ -fexperimental-library \
   -O2 examples/encrypt.cpp -o solitaire_encrypt -lthe_deck
+$ ./solitaire_encrypt
 ```
 
-Note that since `the_deck` uses features from the latest C++23
-standard, each compiler will require different incantations in
-order to work. These instructions work with Clang: other
-compilers, you’re on your own.
+Enter some text followed by Ctrl-D to exit.

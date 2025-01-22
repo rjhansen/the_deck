@@ -14,6 +14,7 @@
 #include <cstdint>
 #include <iostream>
 #include <iterator>
+#include <mutex>
 #include <numeric>
 #include <random>
 #include <ranges>
@@ -159,9 +160,10 @@ DLL_API std::ostream& operator<<(std::ostream& stream, const Card& card);
  */
 struct DLL_API Deck {
 private:
-    static std::mt19937 gen;
+    inline static std::mt19937 gen { std::random_device{}() };
     static const Card JOKER_A;
     static const Card JOKER_B;
+    inline static std::mutex gen_mutex;
 
 public:
     /**  This is public to facilitate third parties (you) doing sneaky
