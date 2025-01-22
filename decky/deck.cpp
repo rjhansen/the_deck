@@ -4,8 +4,8 @@
 using std::get;
 using std::lock_guard;
 using std::logic_error;
-using std::mutex;
 using std::mt19937;
+using std::mutex;
 using std::ostream;
 using std::out_of_range;
 using std::random_device;
@@ -35,7 +35,7 @@ bool Deck::operator==(const Deck& other) const
 void Deck::shuffle()
 {
     const lock_guard<mutex> lock(gen_mutex);
-    std::ranges::shuffle(deck, gen); 
+    std::ranges::shuffle(deck, gen);
 }
 
 void Deck::sort() { std::sort(deck.begin(), deck.end()); }

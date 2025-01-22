@@ -160,7 +160,7 @@ DLL_API std::ostream& operator<<(std::ostream& stream, const Card& card);
  */
 struct DLL_API Deck {
 private:
-    inline static std::mt19937 gen { std::random_device{}() };
+    inline static std::mt19937 gen { std::random_device {}() };
     static const Card JOKER_A;
     static const Card JOKER_B;
     inline static std::mutex gen_mutex;
