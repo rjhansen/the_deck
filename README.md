@@ -1,14 +1,26 @@
-# Rob’s branch of `the_deck`
+# Rob’s fork of `the_deck`
 
-Over two days of work we pushed `the_deck` from nothing to a minimum viable
-product. We were unable to spend the time to give it the polish and attention
-it deserved. So, I decided to do that.
+Over the Christmas holidays I taught a weeklong course in modern C++ design.
+The major project was an implementation of Bruce Schneier’s Solitaire
+encryption algorithm, as made famous in Neal Stephenson’s 
+[_Cryptonomicon_](https://www.amazon.com/Cryptonomicon-Neal-Stephenson/dp/0060512806).
+It was a good project that forced students to explore some of the new
+facilities provided by the C++20 standard.
 
-The overall changes are minor: for instance, since `Suit` and `Rank` have no
-meaning outside of a `Card`, those `enums` were moved into the `Card` class.
+At the end of this we had a minimum viable product for a Solitaire library,
+and I decided it was very close to being an excellent starting point for
+people looking for a model for modern C++ code. So, with the permission of the
+student who wrote the core of this, I’ve completed it.
 
-Some old-style STL algorithms were replaced by their modern Ranges and/or 
-Views equivalents.
+# What does it do?
+It implements an encryption algorithm, but does so using a crossplatform
+build environment that works with pretty much every C++ compiler out there
+and shows:
+
+* modern C++ design
+* CMake usage
+* building shared and static libraries
+* how to use this as a structure for your own code
 
 # Tested compilers
 
@@ -58,10 +70,11 @@ PS> cl.exe /EHsc /O1 /std:c++latest /Iartifacts\dev \
     examples\encrypt.cpp /Fesolitaire_encrypt.exe /link \
     artifacts\dev\the_deck.lib
 PS> Copy-Item artifacts\dev\the_deck.dll -Destination .
-PS> .\solitaire_encrypt
+PS> .\solitaire_encrypt.exe
 ```
 
-Enter some text followed by Ctrl-Z to exit.
+Run `solitaire_encrypt.exe`. Enter some text followed by Ctrl-D to exit.
+
 
 # MacOS and UNIX
 
@@ -78,7 +91,7 @@ $ cd ..
 
 There’s an included shell script (`build.sh`) to do it all for you.
 
-### MacOS-specific instructions
+### macOS-specific instructions
 I haven’t yet figured out how to do `@rpath` substitution, so for 
 now please add the line 
 
@@ -87,6 +100,11 @@ export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/usr/local/lib
 ```
 
 … to your `$HOME/.zprofile` file.
+
+### Linux-specific instructions
+Like with macOS (see above), please either do a similar `export` (but
+this time, of `LD_LIBRARY_PATH`), or else add `/usr/local/lib64` and/or
+`/usr/local/lib` to your `/etc/ld.so.conf` file and run `sudo ldconfig`.
 
 ## Testing
 
@@ -100,4 +118,11 @@ $ clang++ -std=c++23 -stdlib=libc++ -fexperimental-library \
 $ ./solitaire_encrypt
 ```
 
-Enter some text followed by Ctrl-D to exit.
+Alternately,
+```bash
+$ g++ -std=c++23 -O2 examples/encrypt.cpp -o solitaire_encrypt \
+  -lthe_deck
+$ ./solitaire_encrypt
+```
+
+Run `solitaire_encrypt`. Enter some text followed by Ctrl-D to exit.
