@@ -1,0 +1,6 @@
+add_executable(encrypt_sol encrypt.cpp)
+add_executable(decrypt_sol decrypt.cpp)
+target_include_directories(encrypt_sol PUBLIC ../decky)
+target_include_directories(decrypt_sol PUBLIC ../decky)
+target_link_libraries(encrypt_sol PUBLIC the_deck)
+target_link_libraries(decrypt_sol PUBLIC the_deck)

@@ -1,56 +1,60 @@
-#include <stdexcept>
-#include <ranges>
+#include "the_deck.h"
 #include <tuple>
 
-#include "decky.h"
+using std::get;
+using std::lock_guard;
+using std::logic_error;
+using std::mt19937;
+using std::mutex;
+using std::ostream;
+using std::out_of_range;
+using std::random_device;
+using std::swap;
+using std::tuple;
+using std::vector;
+using std::ranges::all_of;
+using std::ranges::copy;
+using std::ranges::find;
+using std::ranges::find_if;
+using std::views::zip;
 
-const Card Deck::JOKER_A(Suit::NONE, Rank::JOKER_A);
-const Card Deck::JOKER_B(Suit::NONE, Rank::JOKER_B);
+namespace The_Deck {
+const Card Deck::JOKER_A(Card::Suit::NONE, Card::Rank::JOKER_A);
+const Card Deck::JOKER_B(Card::Suit::NONE, Card::Rank::JOKER_B);
 
-Card& Deck::operator[](const size_t index)
-{
-    return deck.at(index);
-}
+Card& Deck::operator[](size_t index) { return deck.at(index); }
 
-const Card& Deck::operator[](const size_t index) const
-{
-    return deck.at(index);
-}
+const Card& Deck::operator[](size_t index) const { return deck.at(index); }
 
 bool Deck::operator==(const Deck& other) const
 {
-    for (std::tuple<const Card&, const Card&> item : std::views::zip(deck, other.deck))
-        if(std::get<0>(item) != std::get<1>(item))
-            return false;
-    return true;
-
-    //std::vector<Card> temp;
-    // Requires the input ranges to be sorted, so not useful here since decks can be out of order
-    //std::set_difference(deck.cbegin(), deck.cend(), other.deck.cbegin(), other.deck.cend(), std::back_inserter(temp));
-    //return temp.empty();
+    return all_of(zip(deck, other.deck),
+        [](const auto& item) { return get<0>(item) == get<1>(item); });
 }
 
 void Deck::shuffle()
 {
-    std::shuffle(deck.begin(), deck.end(), gen);
+    const lock_guard<mutex> lock(gen_mutex);
+    std::ranges::shuffle(deck, gen);
 }
 
-void Deck::sort()
-{
-    std::sort(deck.begin(), deck.end());
-}
+void Deck::sort() { std::sort(deck.begin(), deck.end()); }
 
-Card Deck::deal(const size_t position)
+Card Deck::deal(const long position)
 {
-    Card card(deck.at(position));
+    if (position < 0 || position >= deck.size())
+        throw out_of_range("Deck::deal: position is out of range");
+    // Already bounds-checked in previous line.  No risk exposure here.
+    Card card(deck[position]);
     deck.erase(deck.begin() + position);
     return card;
 }
 
-void Deck::insert(const Card& card, const size_t position)
+void Deck::insert(const Card& card, const long position)
 {
-    if (position >= deck.size())
-        // If someone gives us a position that's too large, just stick the card at the back of the deck
+    if (position < 0 || position > deck.size())
+        throw out_of_range("Deck::deal: position is out of range");
+    if (position == deck.size())
         deck.push_back(card);
     else
         deck.insert(deck.cbegin() + position, card);
@@ -58,47 +62,40 @@ void Deck::insert(const Card& card, const size_t position)
 
 void Deck::triple_cut()
 {
-    auto first_joker = std::find_if(deck.begin(),
-        deck.end(),
-        [](const auto& card) { return (card.RANK == Rank::JOKER_A || card.RANK == Rank::JOKER_B); });
+    auto first_joker = find_if(deck, [](const auto& card) {
+        return (card.RANK == Card::Rank::JOKER_A || card.RANK == Card::Rank::JOKER_B);
+    });
     if (first_joker == deck.cend()) // Test if there are not enough jokers in the deck
-        throw std::logic_error("No jokers found while trying to perform a triple cut. We need two.");
+        throw logic_error(
+            "No jokers found while trying to perform a triple cut. We need two.");
 
-    auto second_joker = std::find_if(first_joker + 1,
-        deck.end(),
-        [](const auto& card) { return (card.RANK == Rank::JOKER_A || card.RANK == Rank::JOKER_B); });
+    auto second_joker = find_if(first_joker + 1, deck.end(), [](const auto& card) {
+        return (card.RANK == Card::Rank::JOKER_A || card.RANK == Card::Rank::JOKER_B);
+    });
     if (second_joker == deck.cend())
-        throw std::logic_error("Only one joker found while trying to perform a triple cut. We need two.");
+        throw logic_error("Only one joker found while trying to perform a triple "
+                          "cut. We need two.");
 
-    // If you don't want to have to type std:: in front of every std function,
-    // you can import it at the top of the file using a command like
-    // using std::vector;
-    // Do this for every std:: name/function/object you intend to use a lot
-    std::vector<Card> to_first_joker(deck.begin(), first_joker);
-    std::vector<Card> after_second_joker(second_joker + 1, deck.end());
+    vector<Card> to_first_joker(deck.begin(), first_joker);
+    vector<Card> after_second_joker(second_joker + 1, deck.end());
 
-    // Remove the parts outside the jokers from the deck
-    deck.erase(second_joker + 1, deck.end()); // Erase the second half first to avoid making the first iterator invalid
+    // Erase the second half first to avoid making the first iterator invalid
+    deck.erase(second_joker + 1, deck.end());
     deck.erase(deck.begin(), first_joker);
 
-    // Append the middle portion after the original last portion, and then append the first portion to that
-    std::copy(deck.cbegin(), deck.cend(), std::back_inserter(after_second_joker));
-    std::copy(to_first_joker.cbegin(), to_first_joker.cend(), std::back_inserter(after_second_joker));
+    copy(deck, back_inserter(after_second_joker));
+    copy(to_first_joker.cbegin(), to_first_joker.cend(),
+        back_inserter(after_second_joker));
 
     deck = after_second_joker;
 }
 
-// Assumes deck is a circular buffer and moves card down one position in every case.
-// If card is last card in the deck, then the
 void Deck::bury_1_with_wraparound(const Card& card)
 {
-    auto card_location = std::find(deck.begin(), deck.end(), card);
+    auto card_location { find(deck, card) };
 
     if (card_location == deck.end())
-        throw std::logic_error("Card not found");
-
-    // More terse, less legible
-    // std::swap(*card_location, card_location == deck.end()-1 ? *(deck.begin()) : *(card_location+1));
+        throw logic_error("Card not found");
 
     if (card_location == (deck.end() - 1)) {
         auto last_card = *(deck.end() - 1);
@@ -106,7 +103,7 @@ void Deck::bury_1_with_wraparound(const Card& card)
         deck.insert(deck.begin(), last_card);
         card_location = deck.begin();
     }
-    std::swap(*card_location, *(card_location + 1));
+    swap(*card_location, *(card_location + 1));
 }
 
 void Deck::bury_with_wraparound(const Card& card, const size_t slots_down)
@@ -115,48 +112,35 @@ void Deck::bury_with_wraparound(const Card& card, const size_t slots_down)
         bury_1_with_wraparound(card);
 }
 
-void Deck::bury_joker_a()
-{
-    // down by 1 slot unless last card, then down by 2
-    auto joker_a_location = std::find(deck.begin(), deck.end(), JOKER_A);
-    auto joker_a = Card(Suit::NONE, Rank::JOKER_A);
+void Deck::bury_joker_a() { bury_1_with_wraparound(JOKER_A); }
 
-    bury_1_with_wraparound(joker_a);
-}
-
-void Deck::bury_joker_b()
-{
-    // down by 1 slot unless last card, then down by 2
-    auto joker_b_location = std::find(deck.begin(), deck.end(), JOKER_B);
-    auto joker_b = Card(Suit::NONE, Rank::JOKER_B);
-
-    bury_with_wraparound(joker_b, 2);
-}
+void Deck::bury_joker_b() { bury_with_wraparound(JOKER_B, 2); }
 
 void Deck::count_cut()
 {
     const Card& last_card = *(deck.end() - 1);
-    auto index = last_card.card_as_int() + 1; // The cards ALWAYS move by at least 1 position
+    auto index = last_card.card_as_int() + 1;
 
     if (index == deck.size())
         return;
 
-    std::vector<Card> temp_cards(deck.begin(), deck.begin() + index);
+    vector temp_cards(deck.begin(), deck.begin() + index);
     deck.erase(deck.begin(), deck.begin() + index);
     deck.insert(deck.end() - 1, temp_cards.begin(), temp_cards.end());
 }
 
-uint32_t Deck::get_keystream_value()
+uint32_t Deck::get_keystream_value() const
 {
-    auto index = deck.begin()->card_as_int() + 1; // Solitaire's value of a card is 1 more than ours, so count an extra card down
-    return static_cast<uint32_t>(deck.at(index).card_as_int()) + 1; // return solitaire's value rather than ours
+    // The writeup of Solitaire assumes one-based array indexing,
+    // hence our weird +1s here.
+    auto index = deck.begin()->card_as_int() + 1;
+    return static_cast<uint32_t>(deck.at(index).card_as_int()) + 1;
 }
 
-std::ostream& operator<<(std::ostream& stream, const Card& card)
+ostream& operator<<(ostream& stream, const Card& card)
 {
-    // MAKE SURE TO PUT PARENS AROUND THE static_casts BECAUSE OTHERWISE C++ WILL TRY TO 
-    // DO A BINARY SHIFT LEFT ON THE INTS
-    // THE ERRORS MAKE THE DEAD RISE
-    stream << (static_cast<int32_t>(card.SUIT)) << " " << (static_cast<int32_t>(card.RANK));
+    stream << (static_cast<int32_t>(card.SUIT)) << " "
+           << (static_cast<int32_t>(card.RANK));
     return stream;
 }
+} // namespace The_Deck
