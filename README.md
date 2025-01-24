@@ -32,34 +32,13 @@ and shows:
 
 # Windows
 ## Building
-I’m assuming you’re building from a PowerShell developer prompt.
-
-```powershell
-PS> Remove-Item -Recurse -Force build
-PS> Remove-Item -Recurse -Force artifacts
-PS> New-Item -Name build -ItemType Directory
-PS> New-Item -Name artifacts -ItemType Directory
-PS> New-Item -Name artifacts\dev -ItemType Directory
-PS> New-Item -Name artifacts\gtest -ItemType Directory
-PS> Set-Location -Path build
-PS> cmake -S .. -B . 
-PS> msbuild the_deck.sln -p:Configuration=Release
-PS> Copy-Item decky\Release\* -Destination ..\artifacts\dev
-PS> Copy-Item ..\decky\the_deck.h -Destination ..\artifacts\dev
-PS> Copy-Item bin\Release\gtest.dll -Destination ..\artifacts\gtest
-PS> Copy-Item bin\Release\gtest_main.dll -Destination ..\artifacts\gtest
-PS> Copy-Item tests\Release\decky_gtest.exe -Destination ..\artifacts\gtest
-PS> Set-Location -Path ..
-PS> Remove-Item -Recurse -Force build
-```
-
-This is provided for you as `build.ps1`.
-
-The useful build artifacts are `the_deck.lib`, `the_deck.dll`, and 
-`the_deck.exp`. They can all be found under `artifacts\dev`.
+Run `build.ps1`. This will create an output directory, `the_deck-win64-1.0.0`,
+populated with build artifacts and a test suite. It will also build an archive
+file, `the_deck-win64-1.0.0.zip`, for your convenience.
 
 ## Testing
-After running the build script, `artifacts\gtest\decky_gtest.exe`.
+After running the build script, executing
+`the_deck-win64-1.0.0\test_suite\decky_gtest.exe` will run the self-tests.
 
 ## Developing
 Ensure that `the_deck.h` is somewhere on your include path. You can then
@@ -69,7 +48,7 @@ do something like:
 PS> cl.exe /EHsc /O1 /std:c++latest /Iartifacts\dev \
     examples\encrypt.cpp /Fesolitaire_encrypt.exe /link \
     artifacts\dev\the_deck.lib
-PS> Copy-Item artifacts\dev\the_deck.dll -Destination .
+PS> Copy-Item the_deck-win64-1.0.0\dev\the_deck.dll -Destination .
 PS> .\solitaire_encrypt.exe
 ```
 
@@ -79,17 +58,8 @@ Run `solitaire_encrypt.exe`. Enter some text followed by Ctrl-D to exit.
 # MacOS and UNIX
 
 ## Building
-```bash
-$ rm -rf build
-$ mkdir build
-$ cd build
-$ cmake -S.. -B. -GNinja -DCMAKE_BUILD_TYPE=Release
-$ ninja
-$ sudo ninja install
-$ cd ..
-```
-
 There’s an included shell script (`build.sh`) to do it all for you.
+You can also use `build.ps1` if you really want to get funky.
 
 ### macOS-specific instructions
 I haven’t yet figured out how to do `@rpath` substitution, so for 
