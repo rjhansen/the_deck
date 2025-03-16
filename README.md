@@ -12,7 +12,12 @@ and I decided it was very close to being an excellent starting point for
 people looking for a model for modern C++ code. So, with the permission of the
 student who wrote the core of this, I’ve completed it.
 
+# How is it licensed?
+
+Apache 2.0. Share and enjoy, my friends.
+
 # What does it do?
+
 It implements an encryption algorithm, but does so using a crossplatform
 build environment that works with pretty much every C++ compiler out there
 and shows:
@@ -24,13 +29,18 @@ and shows:
 
 # Tested compilers
 
-* Microsoft Visual Studio 2022 on x86_64 Windows 11
-* Clang 19.1.5 on x86_64 Linux
-* Intel C++ 2025.0.4 on x86_64 Linux
-* GNU C++ 14.2.1 on x86_64 Linux
-* Clang 16 on Apple Silicon
+| Vendor            | Compiler | Version | OS            | Processor |
+|:------------------|:--------:|:-------:|:-------------:|----------:|
+| Microsoft         | MSVC 2022| 2022    | Windows 11    | x86_64    |
+| Mingw             | clang++  | 19      | Windows 11    | x86_64    |
+| Mingw             | g++      | 14      | Windows 11    | x86_64    |
+| Intel             | icpx     | 2025    | Fedora 41     | x86_64    |
+| GNU               | g++      | 14      | Fedora 41     | x86_64    |
+| LLVM              | clang++  | 2025    | Fedora 41     | x86_64    |
+| Apple             | clang++  | 16      | macOS Sequoia | Apple Silicon |
 
-# Windows
+# Windows instructions
+
 ## Building
 Run `build.ps1`. This will create an output directory, `the_deck-win64-1.0.0`,
 populated with build artifacts and a test suite. It will also build an archive
@@ -45,7 +55,7 @@ Ensure that `the_deck.h` is somewhere on your include path. You can then
 do something like:
 
 ```powershell
-PS> cl.exe /EHsc /O1 /std:c++latest /Iartifacts\dev \
+PS> cl.exe /EHsc /O1 /std:c++latest /Ipath\to\the_deck.h \
     examples\encrypt.cpp /Fesolitaire_encrypt.exe /link \
     artifacts\dev\the_deck.lib
 PS> Copy-Item the_deck-win64-1.0.0\dev\the_deck.dll -Destination .
