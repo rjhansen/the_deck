@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.30.0 FATAL_ERROR)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 enable_testing()
 
 # C++ Language-specific variables, setting build env constraints
