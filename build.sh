@@ -1,10 +1,10 @@
 #!/bin/sh
 
-rm -rf build
-mkdir build
+rm -rf build subprojects/googletest* subprojects/packagecache
+meson setup build --buildtype=debugoptimized --prefix=$HOME
 cd build
-cmake -S.. -B. -GNinja -DCMAKE_BUILD_TYPE=Release
-ninja
-sudo ninja install
+meson compile
+meson test
+meson install
 cd ..
-rm -rf build
+rm -rf build subprojects/googletest* subprojects/packagecache
